@@ -8,8 +8,6 @@ import { MiGPT, type MiGPTConfig } from 'mi-gpt'
 
 let migpt: MiGPT | undefined
 
-console.log(process)
-
 process.on('message', (msg: any) => {
   if (msg.type === 'destroy') {
     if (migpt) {
