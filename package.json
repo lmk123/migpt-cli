@@ -5,7 +5,8 @@
     "clean-all": "npx nx run-many --target=clean",
     "build-all": "npx nx run-many --target=build",
     "u": "npx npm-check-updates -ws --root -u -x eslint,open",
-    "pcli": "cd apps/cli && npm publish"
+    "pcli": "cd apps/cli && npm publish",
+    "start": "node apps/cli/dist/index.js init"
   },
   "private": true,
   "devDependencies": {

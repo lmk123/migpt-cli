@@ -5,66 +5,44 @@
 ## 安装
 
 1. 安装 Node.js。
-2. 准备一个配置文件 migpt.json。具体配置项见下文。
-3. 在终端中打开 migpt.json 所在的目录，然后运行 `npx migpt-cli`。
-   - 举个例子，假设你的 migpt.json 在桌面，也就是 `~/Desktop/migpt.json`，那么你需要在终端中运行 `cd ~/desktop`，然后再运行 `npx migpt-cli`。
+2. 在终端中运行 `npx migpt-cli init`，这个命令会生成一个示例配置文件 migpt.json。
+    - 第一次运行时，会提示你要不要安装 `migpt-cli`，直接按回车键即可。
+3. 使用文本编辑器或者其它工具编辑 migpt.json。配置项说明请参考 [MiGPT 参数配置](https://github.com/idootop/mi-gpt/blob/main/docs/settings.md)。
+4. 完成编辑后，在终端中运行 `npx migpt-cli`。
 
-migpt-cli 默认会读取当前工作目录下的 `migpt.json` 文件。你也可以通过 `--config` 参数指定配置文件的路径。
+## 机器人的“记忆”
 
-```bash
-npx migpt-cli --config /path/to/my-migpt.json
+假设你在桌面上新建了一个文件夹 `robot_A`，然后在里面运行 `npx migpt-cli init`，生成的配置文件是 `robot_A/migpt.json`，目录结构就像下面这样：
+
+```
+~/Desktop/
+└── robot_A/
+    └── migpt.json
 ```
 
-### migpt.json 结构
+那么，当你首次运行 `npx migpt-cli` 时，机器人会在 `robot_A` 文件夹下生成两个文件 `.bot.json` 和 `.mi.json`，用来存储机器人的“记忆”，目录结构就像下面这样：
 
-配置文件的参数其实就是 MiGPT 在这里的配置项：[参数配置](https://github.com/idootop/mi-gpt/blob/main/docs/settings.md)。
-
-以下是一个示例：
-
-```json
-{
-  "config": {
-    "systemTemplate": "",
-    "bot": {
-      "name": "曹操",
-      "profile": "你是《三国演义》里的曹操。"
-    },
-    "master": {
-      "name": "刘备",
-      "profile": "《三国演义》里的刘备。"
-    },
-    "room": {
-      "name": "三国",
-      "description": "三国演义里的世界"
-    },
-    "speaker": {
-      "userId": "12345678",
-      "password": "your_password",
-      "did": "小爱音箱Pro",
-      "ttsCommand": [5, 1],
-      "wakeUpCommand": [5, 3],
-      "callAIKeywords": ["fdsfesdf随便填写免得被唤醒fsdf"],
-      "wakeUpKeywords": ["把曹操"],
-      "exitKeywords": ["退下"],
-      "onEnterAI": ["进入"],
-      "onAIAsking": ["思考中"],
-      "onAIReplied": ["已回答"],
-      "onExitAI": ["退出"],
-      "exitKeepAliveAfter": 60,
-      "streamResponse": true,
-      "checkInterval": 1000
-    }
-  },
-  "env": {
-    "OPENAI_API_KEY": "xxxxxxx-xxxxxxx-xxxxxxx-xxxxxxx",
-    "OPENAI_MODEL": "gpt-3.5-turbo",
-    "OPENAI_BASE_URL": "https://aaaa.bbbbb.com/api/v1",
-    "AZURE_OPENAI_API_KEY": "",
-    "AUDIO_SILENT": "",
-    "AUDIO_BEEP": "",
-    "AUDIO_ACTIVE": "",
-    "AUDIO_ERROR": "",
-    "TTS_BASE_URL": ""
-  }
-}
 ```
+~/Desktop/
+└── robot_A/
+    ├── .bot.json
+    ├── .mi.json
+    └── migpt.json
+```
+
+之后你每次运行 `npx migpt-cli` 时，你跟机器人之间的“记忆”都会保存到这两个文件当中。换句话说，无论你怎么修改 `robot_A/migpt.json` 的配置，机器人都会记住你的对话历史，直到你删除 `.bot.json` 和 `.mi.json`。
+
+建议使用文件夹来隔离不同的机器人，如果不需要某个机器人了，直接删除对应的文件夹即可，就像下面这样：
+
+```
+~/Desktop/
+├── robot_A/
+│   ├── .bot.json
+│   ├── .mi.json
+│   └── migpt.json
+└── robot_B/
+    ├── .bot.json
+    ├── .mi.json
+    └── migpt.json
+```
+

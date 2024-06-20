@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
+import * as path from 'node:path'
+import fse from 'fs-extra'
 import { program } from 'commander'
 // import { runServer } from './server'
-import * as fs from 'node:fs'
 import { run } from './childCtrl'
 
 program
@@ -11,14 +12,25 @@ program
   .version('1.1.0')
 
 program
+  .command('init')
+  .description('初始化配置文件。')
+  .action(() => {
+    const defaults = path.join(__dirname, '../migpt.defaults.json')
+    const newConfig = path.resolve('migpt.json')
+    fse.copySync(defaults, newConfig)
+    console.log('初始化配置文件成功，文件位置：')
+    console.log(newConfig)
+    console.log(
+      '注意：此配置文件仅仅是一个范本，你需要自行编辑其中的配置项之后才能成功运行 MiGPT！',
+    )
+  })
+
+program
   .command('run', { isDefault: true })
   .description('根据配置文件运行 MiGPT。')
   .option('-c, --config <string>', '配置文件的路径。', 'migpt.json')
   .action((options) => {
-    const jsonStr = fs.readFileSync(options.config, 'utf-8')
-
-    const json = JSON.parse(jsonStr)
-
+    const json = fse.readJSONSync(options.config)
     run(json)
   })
 
