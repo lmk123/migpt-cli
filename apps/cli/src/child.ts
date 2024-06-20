@@ -19,9 +19,7 @@ process.on('message', (msg: any) => {
     }
   } else if (msg.type === 'run') {
     const config = msg.config as MiGPTConfig
-
-    config.speaker.streamResponse = true
-
+    // console.log('配置：\n', config)
     const migpt = MiGPT.create(config)
     migpt.start()
   }

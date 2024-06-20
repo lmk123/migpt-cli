@@ -12,13 +12,17 @@ program
   .version('1.1.0')
 
 program
-  .command('init')
-  .description('初始化配置文件。')
-  .action(() => {
+  .command('create')
+  .description('创建一个机器人。')
+  .argument('<name>', '用于保存机器人数据的文件夹的名称。')
+  .action((name) => {
     const defaults = path.join(__dirname, '../migpt.defaults.json')
-    const newConfig = path.resolve('migpt.json')
+    const robotDir = path.resolve(name)
+    const newConfig = path.join(robotDir, './migpt.json')
     fse.copySync(defaults, newConfig)
-    console.log('初始化配置文件成功，文件位置：')
+    console.log('创建机器人成功，机器人位置：')
+    console.log(robotDir)
+    console.log('机器人配置文件的位置：')
     console.log(newConfig)
     console.log(
       '注意：此配置文件仅仅是一个范本，你需要自行编辑其中的配置项之后才能成功运行 MiGPT！',
@@ -26,11 +30,11 @@ program
   })
 
 program
-  .command('run', { isDefault: true })
-  .description('根据配置文件运行 MiGPT。')
-  .option('-c, --config <string>', '配置文件的路径。', 'migpt.json')
-  .action((options) => {
-    const json = fse.readJSONSync(options.config)
+  .command('run')
+  .description('启动机器人。')
+  .argument('<name>', '保存有机器人数据的文件夹的名字。')
+  .action((name) => {
+    const json = fse.readJSONSync(path.join(name, './migpt.json'))
     run(json)
   })
 
