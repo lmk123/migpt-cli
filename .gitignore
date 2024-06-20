@@ -1,0 +1,28 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+dist
+coverage
+/tmp
+/out-tsc
+
+# dependencies
+node_modules
+
+# IDEs and editors
+/.idea
+
+# misc
+/.sass-cache
+npm-debug.log
+.env
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# 自定义
+/.nx
+/apps/cli/.bot.json
+/apps/cli/.mi.json
+/apps/cli/migpt.json

@@ -1,0 +1,26 @@
+{
+  "name": "@migpt/root",
+  "version": "0.0.0",
+  "scripts": {
+    "clean-all": "npx nx run-many --target=clean",
+    "build-all": "npx nx run-many --target=build",
+    "u": "npx npm-check-updates -ws --root -u -x eslint,open"
+  },
+  "private": true,
+  "devDependencies": {
+    "@babel/core": "^7.24.7",
+    "@babel/preset-env": "^7.24.7",
+    "@babel/preset-typescript": "^7.24.7",
+    "@nrwl/cli": "^15.9.3",
+    "@typescript-eslint/eslint-plugin": "^7.13.1",
+    "@typescript-eslint/parser": "^7.13.1",
+    "eslint": "^8.57.0",
+    "nx": "^19.3.0",
+    "prettier": "^3.3.2",
+    "prettier-plugin-tailwindcss": "^0.6.5"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ]
+}
