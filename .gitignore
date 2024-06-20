@@ -23,3 +23,6 @@ Thumbs.db
 
 # 自定义
 /.nx
+/apps/cli/.bot.json
+/apps/cli/.mi.json
+/apps/cli/migpt.json
