@@ -41,10 +41,11 @@ function killChild() {
   })
 }
 
-export async function run(config: RunConfig) {
+export async function run(config: RunConfig, cwd?: string) {
   await killChild()
   child = childProcess.fork(path.join(__dirname, './child.js'), {
     env: config.env,
+    cwd,
   })
   child.send({ type: 'run', config: config.config })
 }

@@ -35,7 +35,7 @@ program
   .argument('<name>', '保存有机器人数据的文件夹的名字。')
   .action((name) => {
     const json = fse.readJSONSync(path.join(name, './migpt.json'))
-    run(json)
+    run(json, name)
   })
 
 program.parse(process.argv)
