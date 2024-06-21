@@ -5,11 +5,11 @@
 ## 安装
 
 1. 安装 Node.js。
-2. 在终端中运行 `npx migpt-cli create myfirstbot`，这个命令会生成一个名为 `myfirstbot` 的文件夹，里面会有一个示例配置文件 migpt.json。
-    - 第一次运行时，会提示你要不要安装 `migpt-cli`，直接按回车键即可。
-    - 你可以把其中的 `myfirstbot` 替换成你想要的名字，但要注意后面的步骤中的命令也要把 `myfirstbot` 替换成你的名字。
-3. 使用文本编辑器或者其它工具编辑 `myfirstbot/migpt.json`。配置项说明请参考 [MiGPT 参数配置](https://github.com/idootop/mi-gpt/blob/main/docs/settings.md)。
-4. 完成编辑后，在终端中运行 `npx migpt-cli run myfirstbot`。
+2. 在终端中运行 `npx -y migpt-cli create myfirstbot`，这个命令会生成一个名为 `myfirstbot` 的文件夹，里面会有一个示例配置文件 migpt.json。
+    - 你可以把其中的 `myfirstbot` 替换成你想要的名字，但要注意后面的步骤中也要把 `myfirstbot` 替换成你的名字。
+3. 使用文本编辑器或者其它工具编辑 `myfirstbot/migpt.json`。
+    - 配置项说明请参考 [MiGPT 参数配置](https://github.com/idootop/mi-gpt/blob/main/docs/settings.md)。
+4. 完成编辑后，在终端中运行 `npx -y migpt-cli run myfirstbot`。
 5. 当你不再需要这个机器人时，直接删除 `myfirstbot` 文件夹即可。
 
 ## 机器人的“记忆”
