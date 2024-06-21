@@ -5,10 +5,12 @@
   "scripts": {
     "clean": "rm -rf dist",
     "checktype": "tsc --noEmit",
-    "dev": "npm run clean && webpack serve --env mode=development",
-    "build": "npm run clean && npm run checktype && webpack --env mode=production"
+    "dev": "webpack serve --env mode=development",
+    "build": "npm run checktype && webpack --env mode=production"
   },
   "dependencies": {
+    "@blueprintjs/core": "^5.10.3",
+    "@blueprintjs/icons": "^5.9.0",
     "core-js": "^3.37.1",
     "normalize.css": "^8.0.1",
     "react": "^18.3.1",

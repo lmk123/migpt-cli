@@ -28,7 +28,7 @@ module.exports = function buildWebpackConfig(mode) {
     module: {
       rules: [
         {
-          test: /\.(woff2|ico|png)$/i,
+          test: /\.(woff2|ico|png|eot|svg|ttf|woff)$/i,
           loader: 'file-loader',
           options: {
             name: '[name].[ext]',
