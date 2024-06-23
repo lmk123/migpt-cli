@@ -1,0 +1,20 @@
+/*@tailwind base;*/
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+#app {
+  padding-top: 50px;
+}
+
+.bp5-label {
+  width: 160px;
+}
+
+.bp5-input-group:not(.tw-min-w-0),
+textarea {
+  min-width: 600px;
+}

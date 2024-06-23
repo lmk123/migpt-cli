@@ -4,8 +4,8 @@
   "scripts": {
     "clean-all": "npx nx run-many --target=clean",
     "build-all": "npx nx run-many --target=build",
-    "u": "npx npm-check-updates -ws --root -u -x eslint,open",
-    "pcli": "cd apps/cli && npm publish"
+    "u": "npx -y npm-check-updates -ws --root -u -x eslint,open",
+    "pub-cli": "npx nx run migpt-cli:build --verbose && npm publish -w apps/cli"
   },
   "private": true,
   "devDependencies": {

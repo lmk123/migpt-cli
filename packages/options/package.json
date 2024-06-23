@@ -1,0 +1,33 @@
+{
+  "name": "@mgc/options",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build:mjs": "tsc -p tsconfig.build.json -m ESNext --moduleResolution Bundler -d && js-to-mjs dist",
+    "build:cjs": "tsc -p tsconfig.build.json -m NodeNext",
+    "build": "npm run build:mjs && npm run build:cjs",
+    "dev": "nodemon --watch src -e ts,tsx --exec \"npm run build\""
+  },
+  "dependencies": {
+    "@blueprintjs/core": "^5.10.3",
+    "@blueprintjs/icons": "^5.9.0",
+    "immer": "^10.1.1",
+    "lodash": "^4.17.21",
+    "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.5",
+    "mi-gpt": "^4.0.0",
+    "nodemon": "^3.1.4"
+  }
+}
