@@ -2,6 +2,7 @@ import { Options, defaults } from '@mgc/options'
 import { Alignment, Button, FocusStyleManager, Navbar } from '@blueprintjs/core'
 import { useState } from 'react'
 import { ImportJSON } from './ImportJSON'
+import * as apis from './apis'
 
 FocusStyleManager.onlyShowFocusOnTabs()
 
@@ -26,7 +27,21 @@ export function App() {
             >
               启动
             </Button>
-            <Button icon={'stop'}>停止</Button>
+            <Button
+              icon={'stop'}
+              onClick={() => {
+                apis.stop().then(
+                  () => {
+                    alert('停止成功！')
+                  },
+                  (err) => {
+                    alert('停止失败！' + err)
+                  },
+                )
+              }}
+            >
+              停止
+            </Button>
             <ImportJSON
               onJSON={(json) => {
                 setConfig(json as any)
@@ -73,8 +88,14 @@ export function App() {
             ref={setFormEle}
             onSubmit={(event) => {
               event.preventDefault()
-              console.log('提交了表单')
-              console.log(config)
+              apis.run(config).then(
+                () => {
+                  alert('启动成功！你可以切换回终端内查看运行日志。')
+                },
+                (err) => {
+                  alert('启动失败！' + err)
+                },
+              )
             }}
           >
             <Options
