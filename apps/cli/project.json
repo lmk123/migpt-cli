@@ -1,0 +1,13 @@
+{
+  "targets": {
+    "build": {
+      "dependsOn": [
+        "^build",
+        {
+          "projects": ["@private/gui-web"],
+          "target": "build"
+        }
+      ]
+    }
+  }
+}

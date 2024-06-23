@@ -10,17 +10,11 @@
   ],
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "tsc -p tsconfig.build.json -m NodeNext",
+    "build": "tsc -p tsconfig.build.json -m NodeNext && npm run cp-web",
     "dev": "tsc -p tsconfig.build.json -m NodeNext -w",
+    "cp-web": "mkdir -p dist/web/ && cp -r ../../packages/gui-web/dist/* dist/web/",
     "prepublishOnly": "npm run clean && npm run build",
     "start": "node dist/index.js create robot-test"
-  },
-  "devDependencies": {
-    "@hcfy/js-to-mjs": "^1.1.0",
-    "@types/express": "^4.17.21",
-    "@types/fs-extra": "^11.0.4",
-    "@types/node": "^20.14.7",
-    "typescript": "^5.5.2"
   },
   "dependencies": {
     "commander": "^12.1.0",
@@ -28,5 +22,12 @@
     "fs-extra": "^11.2.0",
     "mi-gpt": "^4.0.0",
     "open": "^8.4.2"
+  },
+  "devDependencies": {
+    "@hcfy/js-to-mjs": "^1.1.0",
+    "@types/express": "^4.17.21",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.14.7",
+    "typescript": "^5.5.2"
   }
 }

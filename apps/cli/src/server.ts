@@ -1,12 +1,16 @@
+import * as path from 'node:path'
 import express from 'express'
-// import open from 'open'
+import open from 'open'
 import { getStatus, type RunConfig, run, stop } from './childCtrl'
 
 export function runServer(options?: { open?: boolean; port?: number }) {
   const port = options?.port || 36592
+  const isAutoOpen = options?.open == null ? true : options.open
 
   const app = express()
   app.use(express.json())
+
+  app.use(express.static(path.join(__dirname, './web')))
 
   app.get('/api/status', async (req, res) => {
     res.json(getStatus())
@@ -30,15 +34,9 @@ export function runServer(options?: { open?: boolean; port?: number }) {
     res.json({ success: true })
   })
 
-  // todo: 确定配置页面的地址后在这里跳转过去
-  // app.get('/', (req, res) => {
-  //   res.redirect('http://migpt.example.com')
-  // })
-
   app.listen(port, () => {
-    if (options?.open) {
-      // todo: 确定配置页面的地址后在这里跳转过去
-      // open(`http://migpt.example.com`)
+    if (isAutoOpen) {
+      open(`http://localhost:${port}`)
     }
   })
 }
