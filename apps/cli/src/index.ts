@@ -9,7 +9,7 @@ import { run } from './childCtrl'
 program
   .name('migpt-cli')
   .description('用于运行 MiGPT 的命令行工具。')
-  .version('2.0.1')
+  .version('3.0.0')
 
 program
   .command('create')
