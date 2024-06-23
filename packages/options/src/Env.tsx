@@ -23,6 +23,11 @@ export function Env(props: {
     <div className={'tw-space-y-4'}>
       <Card>
         <H5>AI 服务</H5>
+        <p>
+          <a href="https://migptgui.com/docs/apply/" target={'_blank'}>
+            点击查看 AI 服务申请教程
+          </a>
+        </p>
         <FormGroup label={'OPENAI_API_KEY'} inline>
           <InputGroup
             required

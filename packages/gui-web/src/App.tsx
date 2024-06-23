@@ -1,5 +1,11 @@
 import { Options, defaults } from '@mgc/options'
-import { Alignment, Button, FocusStyleManager, Navbar } from '@blueprintjs/core'
+import {
+  Alignment,
+  AnchorButton,
+  Button,
+  FocusStyleManager,
+  Navbar,
+} from '@blueprintjs/core'
 import { useState } from 'react'
 import { ImportJSON } from './ImportJSON'
 import * as apis from './apis'
@@ -76,6 +82,13 @@ export function App() {
             >
               导出
             </Button>
+            <AnchorButton
+              href={'https://migptgui.com/options/'}
+              intent={'primary'}
+              target={'_blank'}
+            >
+              配置项详解
+            </AnchorButton>
           </div>
         </Navbar.Group>
       </Navbar>
