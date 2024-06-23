@@ -6,6 +6,10 @@
   box-sizing: border-box;
 }
 
+#app {
+  padding-top: 50px;
+}
+
 .bp5-label {
   width: 160px;
 }
