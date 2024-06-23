@@ -83,7 +83,7 @@ export function App() {
               导出
             </Button>
             <AnchorButton
-              href={'https://migptgui.com/options/'}
+              href={'https://migptgui.com/docs/options/'}
               intent={'primary'}
               target={'_blank'}
             >
