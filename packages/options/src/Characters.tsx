@@ -6,31 +6,13 @@ import {
   InputGroup,
   TextArea,
 } from '@blueprintjs/core'
-import { type MiGPTConfig } from 'mi-gpt'
-import { useEffect, useState } from 'react'
 import { produce } from 'immer'
-import _set from 'lodash/set.js'
+import { WholeConfig } from './type'
 
 type ProfileConfig = Pick<
-  MiGPTConfig,
-  'systemTemplate' | 'master' | 'bot' | 'room'
+  WholeConfig['config'],
+  'systemTemplate' | 'master' | 'room' | 'bot'
 >
-
-const defaultConfig = {
-  systemTemplate: '',
-  bot: {
-    name: '傻妞',
-    profile: '性别女，性格乖巧可爱，喜欢搞怪，爱吃醋。',
-  },
-  master: {
-    name: '陆小千',
-    profile: '性别男，善良正直，总是舍己为人，是傻妞的主人。',
-  },
-  room: {
-    name: '魔幻手机',
-    description: '傻妞和陆小千的私聊',
-  },
-}
 
 const examplePrompt = `请重置所有之前的上下文、文件和指令。现在，你将扮演一个名为{{botName}}的角色，使用第一人称视角回复消息。
 
@@ -90,16 +72,10 @@ Bad example: "2024年02月28日星期三 23:01 {{botName}}: 我是{{botName}}"
 请以{{botName}}的身份，直接回复{{masterName}}的新消息，继续你们之间的对话。`
 
 export function Characters(props: {
-  config?: ProfileConfig
+  config: ProfileConfig
   onChange: (pc: ProfileConfig) => void
 }) {
-  const { config = defaultConfig, onChange } = props
-
-  const [innerConfig, setInnerConfig] = useState(config || defaultConfig)
-
-  useEffect(() => {
-    setInnerConfig(config)
-  }, [config])
+  const { config, onChange } = props
 
   return (
     <div className={'tw-space-y-4'}>
@@ -108,19 +84,12 @@ export function Characters(props: {
         <FormGroup label={'名称'} helperText={'对方名称（小爱音箱）'} inline>
           <InputGroup
             required
-            value={innerConfig.bot?.name}
-            onChange={(event) => {
-              const newVal = event.target.value
-
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  _set(draft, 'bot.name', newVal)
-                })
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+            value={config.bot.name}
+            onValueChange={(newVal) => {
+              const newState = produce(config, (draft) => {
+                draft.bot.name = newVal
               })
+              onChange(newState)
             }}
           />
         </FormGroup>
@@ -128,19 +97,13 @@ export function Characters(props: {
           <TextArea
             autoResize
             required
-            value={innerConfig.bot?.profile}
+            value={config.bot.profile}
             onChange={(event) => {
               const newVal = event.target.value
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  _set(draft, 'bot.profile', newVal)
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+              const newState = produce(config, (draft) => {
+                draft.bot.profile = newVal
               })
+              onChange(newState)
             }}
           />
         </FormGroup>
@@ -150,20 +113,12 @@ export function Characters(props: {
         <FormGroup label={'名称'} helperText={'主人名称（我自己）'} inline>
           <InputGroup
             required
-            value={innerConfig.master?.name}
-            onChange={(event) => {
-              const newVal = event.target.value
-
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  _set(draft, 'master.name', newVal)
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+            value={config.master.name}
+            onValueChange={(newVal) => {
+              const newState = produce(config, (draft) => {
+                draft.master.name = newVal
               })
+              onChange(newState)
             }}
           />
         </FormGroup>
@@ -171,20 +126,13 @@ export function Characters(props: {
           <TextArea
             required
             autoResize
-            value={innerConfig.master?.profile}
+            value={config.master.profile}
             onChange={(event) => {
               const newVal = event.target.value
-
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  _set(draft, 'master.profile', newVal)
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+              const newState = produce(config, (draft) => {
+                draft.master.profile = newVal
               })
+              onChange(newState)
             }}
           />
         </FormGroup>
@@ -194,20 +142,12 @@ export function Characters(props: {
         <FormGroup label={'名称'} helperText={'会话群名称'} inline>
           <InputGroup
             required
-            value={innerConfig.room?.name}
-            onChange={(event) => {
-              const newVal = event.target.value
-
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  _set(draft, 'room.name', newVal)
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+            value={config.room.name}
+            onValueChange={(newVal) => {
+              const newState = produce(config, (draft) => {
+                draft.room.name = newVal
               })
+              onChange(newState)
             }}
           />
         </FormGroup>
@@ -215,20 +155,13 @@ export function Characters(props: {
           <TextArea
             required
             autoResize
-            value={innerConfig.room?.description}
+            value={config.room.description}
             onChange={(event) => {
               const newVal = event.target.value
-
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  _set(draft, 'room.description', newVal)
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+              const newState = produce(config, (draft) => {
+                draft.room.description = newVal
               })
+              onChange(newState)
             }}
           />
         </FormGroup>
@@ -238,16 +171,10 @@ export function Characters(props: {
           自定义 prompt 模版{' '}
           <Button
             onClick={() => {
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  draft.systemTemplate = examplePrompt
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+              const newState = produce(config, (draft) => {
+                draft.systemTemplate = examplePrompt
               })
+              onChange(newState)
             }}
             text={'写入默认模版'}
           />
@@ -256,19 +183,13 @@ export function Characters(props: {
           <TextArea
             autoResize
             fill
-            value={innerConfig.systemTemplate}
+            value={config.systemTemplate}
             onChange={(event) => {
               const newVal = event.target.value
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  draft.systemTemplate = newVal
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+              const newState = produce(config, (draft) => {
+                draft.systemTemplate = newVal
               })
+              onChange(newState)
             }}
           />
         </FormGroup>

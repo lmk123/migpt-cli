@@ -1,54 +1,15 @@
-import { MiGPTConfig } from 'mi-gpt'
-import { useEffect, useState } from 'react'
 import { Card, Checkbox, FormGroup, H5, InputGroup } from '@blueprintjs/core'
 import { produce } from 'immer'
 import { LotCommand } from './components/LotCommand'
 import { MultiInput } from './components/MultiInput'
 import { NumberText } from './components/NumberText'
-
-type SpeakerConfig = Omit<
-  MiGPTConfig['speaker'],
-  'ttsCommand' | 'wakeUpCommand' | 'playingCommand' | 'tts'
-> & {
-  tts?: string
-  ttsCommand?: (number | undefined)[]
-  wakeUpCommand?: (number | undefined)[]
-  playingCommand?: (number | undefined)[]
-}
-
-const defaultConfig: SpeakerConfig = {
-  userId: '',
-  password: '',
-  did: '',
-  // ttsCommand: [],
-  // wakeUpCommand: [],
-  tts: 'xiaoai',
-  switchSpeakerKeywords: ['把声音换成'],
-  callAIKeywords: ['请', '傻妞'],
-  wakeUpKeywords: ['召唤傻妞', '打开傻妞'],
-  exitKeywords: ['退出傻妞', '关闭傻妞'],
-  onEnterAI: ['你好，我是傻妞，很高兴认识你'],
-  onExitAI: ['傻妞已退出'],
-  onAIAsking: ['让我先想想', '请稍等'],
-  onAIReplied: ['我说完了', '还有其他问题吗'],
-  onAIError: ['出错了，请稍后再试吧！'],
-  streamResponse: true,
-  exitKeepAliveAfter: 30,
-  checkInterval: 1000,
-  checkTTSStatusAfter: 3,
-}
+import { type SpeakerConfig } from './type'
 
 export function Speaker(props: {
-  config?: SpeakerConfig
+  config: SpeakerConfig
   onChange: (config: SpeakerConfig) => void
 }) {
-  const { config = defaultConfig, onChange } = props
-
-  const [innerConfig, setInnerConfig] = useState(config || defaultConfig)
-
-  useEffect(() => {
-    setInnerConfig(config)
-  }, [config])
+  const { config, onChange } = props
 
   return (
     <div className={'tw-space-y-4'}>
@@ -71,20 +32,12 @@ export function Speaker(props: {
         >
           <InputGroup
             required
-            value={innerConfig.userId}
-            onChange={(event) => {
-              const newVal = event.target.value
-
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  draft.userId = newVal
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+            value={config.userId || ''}
+            onValueChange={(newVal) => {
+              const newState = produce(config, (draft) => {
+                draft.userId = newVal
               })
+              onChange(newState)
             }}
           />
         </FormGroup>
@@ -92,19 +45,12 @@ export function Speaker(props: {
           <InputGroup
             required
             type={'password'}
-            value={innerConfig.password}
-            onChange={(event) => {
-              const newVal = event.target.value
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  draft.password = newVal
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+            value={config.password || ''}
+            onValueChange={(newVal) => {
+              const newState = produce(config, (draft) => {
+                draft.password = newVal
               })
+              onChange(newState)
             }}
           ></InputGroup>
         </FormGroup>
@@ -117,76 +63,50 @@ export function Speaker(props: {
         >
           <InputGroup
             required
-            value={innerConfig.did}
-            onChange={(event) => {
-              const newVal = event.target.value
-
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  draft.did = newVal
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+            value={config.did || ''}
+            onValueChange={(newVal) => {
+              const newState = produce(config, (draft) => {
+                draft.did = newVal
               })
+              onChange(newState)
             }}
           />
         </FormGroup>
         <FormGroup label={'TTS 命令'} inline>
           <LotCommand
             required
-            value={innerConfig.ttsCommand}
+            value={config.ttsCommand}
             count={2}
             onChange={(value) => {
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  draft.ttsCommand = value
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+              const newState = produce(config, (draft) => {
+                draft.ttsCommand = value
               })
+              onChange(newState)
             }}
           />
         </FormGroup>
         <FormGroup label={'唤醒命令'} inline>
           <LotCommand
             required
-            value={innerConfig.wakeUpCommand}
+            value={config.wakeUpCommand}
             count={2}
             onChange={(value) => {
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  draft.wakeUpCommand = value
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+              const newState = produce(config, (draft) => {
+                draft.wakeUpCommand = value
               })
+              onChange(newState)
             }}
           />
         </FormGroup>
         <FormGroup label={'播放命令'} inline>
           <LotCommand
-            value={innerConfig.playingCommand}
+            value={config.playingCommand}
             count={3}
             onChange={(value) => {
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  draft.playingCommand = value
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+              const newState = produce(config, (draft) => {
+                draft.playingCommand = value
               })
+              onChange(newState)
             }}
           />
         </FormGroup>
@@ -202,19 +122,13 @@ export function Speaker(props: {
           inline
         >
           <Checkbox
-            checked={innerConfig.streamResponse}
+            checked={config.streamResponse}
             onChange={(event) => {
               const newVal = event.target.checked
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  draft.streamResponse = newVal
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+              const newState = produce(config, (draft) => {
+                draft.streamResponse = newVal
               })
+              onChange(newState)
             }}
           />
         </FormGroup>
@@ -227,18 +141,12 @@ export function Speaker(props: {
           inline
         >
           <MultiInput
-            value={innerConfig.wakeUpKeywords}
+            value={config.wakeUpKeywords}
             onChange={(value) => {
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  draft.wakeUpKeywords = value
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+              const newState = produce(config, (draft) => {
+                draft.wakeUpKeywords = value
               })
+              onChange(newState)
             }}
           />
         </FormGroup>
@@ -249,18 +157,12 @@ export function Speaker(props: {
           inline
         >
           <MultiInput
-            value={innerConfig.exitKeywords}
+            value={config.exitKeywords}
             onChange={(value) => {
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  draft.exitKeywords = value
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+              const newState = produce(config, (draft) => {
+                draft.exitKeywords = value
               })
+              onChange(newState)
             }}
           />
         </FormGroup>
@@ -272,23 +174,17 @@ export function Speaker(props: {
           <NumberText
             required
             value={
-              innerConfig.exitKeepAliveAfter == null
+              config.exitKeepAliveAfter == null
                 ? null
-                : innerConfig.exitKeepAliveAfter
+                : config.exitKeepAliveAfter
             }
             min={1}
             pattern={'\\d+'}
             onValueChange={(newVal) => {
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  draft.exitKeepAliveAfter = newVal == null ? undefined : newVal
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+              const newState = produce(config, (draft) => {
+                draft.exitKeepAliveAfter = newVal == null ? undefined : newVal
               })
+              onChange(newState)
             }}
           />
         </FormGroup>
@@ -301,24 +197,14 @@ export function Speaker(props: {
         >
           <NumberText
             required
-            value={
-              innerConfig.checkInterval == null
-                ? null
-                : innerConfig.checkInterval
-            }
+            value={config.checkInterval == null ? null : config.checkInterval}
             min={500}
             pattern={'\\d+'}
             onValueChange={(newVal) => {
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  draft.checkInterval = newVal == null ? undefined : newVal
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+              const newState = produce(config, (draft) => {
+                draft.checkInterval = newVal == null ? undefined : newVal
               })
+              onChange(newState)
             }}
           />
         </FormGroup>
@@ -332,24 +218,18 @@ export function Speaker(props: {
           <NumberText
             required
             value={
-              innerConfig.checkTTSStatusAfter == null
+              config.checkTTSStatusAfter == null
                 ? null
-                : innerConfig.checkTTSStatusAfter
+                : config.checkTTSStatusAfter
             }
             min={1}
             pattern={'\\d+'}
             onValueChange={(newVal) => {
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  draft.checkTTSStatusAfter =
-                    newVal == null ? undefined : newVal
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+              const newState = produce(config, (draft) => {
+                draft.checkTTSStatusAfter = newVal == null ? undefined : newVal
               })
+
+              onChange(newState)
             }}
           />
         </FormGroup>
@@ -363,18 +243,13 @@ export function Speaker(props: {
           inline
         >
           <MultiInput
-            value={innerConfig.callAIKeywords}
+            value={config.callAIKeywords}
             onChange={(value) => {
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  draft.callAIKeywords = value
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+              const newState = produce(config, (draft) => {
+                draft.callAIKeywords = value
               })
+
+              onChange(newState)
             }}
           />
         </FormGroup>
@@ -388,18 +263,13 @@ export function Speaker(props: {
           inline
         >
           <MultiInput
-            value={innerConfig.onEnterAI}
+            value={config.onEnterAI}
             onChange={(value) => {
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  draft.onEnterAI = value
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+              const newState = produce(config, (draft) => {
+                draft.onEnterAI = value
               })
+
+              onChange(newState)
             }}
           />
         </FormGroup>
@@ -410,18 +280,13 @@ export function Speaker(props: {
           inline
         >
           <MultiInput
-            value={innerConfig.onExitAI}
+            value={config.onExitAI}
             onChange={(value) => {
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  draft.onExitAI = value
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+              const newState = produce(config, (draft) => {
+                draft.onExitAI = value
               })
+
+              onChange(newState)
             }}
           />
         </FormGroup>
@@ -432,18 +297,13 @@ export function Speaker(props: {
           inline
         >
           <MultiInput
-            value={innerConfig.onAIAsking}
+            value={config.onAIAsking}
             onChange={(value) => {
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  draft.onAIAsking = value
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+              const newState = produce(config, (draft) => {
+                draft.onAIAsking = value
               })
+
+              onChange(newState)
             }}
           />
         </FormGroup>
@@ -454,18 +314,13 @@ export function Speaker(props: {
           inline
         >
           <MultiInput
-            value={innerConfig.onAIReplied}
+            value={config.onAIReplied}
             onChange={(value) => {
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  draft.onAIReplied = value
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+              const newState = produce(config, (draft) => {
+                draft.onAIReplied = value
               })
+
+              onChange(newState)
             }}
           />
         </FormGroup>
@@ -476,18 +331,13 @@ export function Speaker(props: {
           inline
         >
           <MultiInput
-            value={innerConfig.onAIError}
+            value={config.onAIError}
             onChange={(value) => {
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  draft.onAIError = value
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+              const newState = produce(config, (draft) => {
+                draft.onAIError = value
               })
+
+              onChange(newState)
             }}
           />
         </FormGroup>
@@ -497,18 +347,13 @@ export function Speaker(props: {
         <FormGroup label={'TTS 引擎'} inline>
           <InputGroup
             required
-            value={innerConfig.tts}
+            value={config.tts || ''}
             onValueChange={(newVal) => {
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  draft.tts = newVal
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+              const newState = produce(config, (draft) => {
+                draft.tts = newVal
               })
+
+              onChange(newState)
             }}
           />
         </FormGroup>
@@ -519,18 +364,13 @@ export function Speaker(props: {
           inline
         >
           <MultiInput
-            value={innerConfig.switchSpeakerKeywords}
+            value={config.switchSpeakerKeywords}
             onChange={(value) => {
-              setInnerConfig((prevState) => {
-                const newState = produce(prevState, (draft) => {
-                  draft.switchSpeakerKeywords = value
-                })
-
-                setTimeout(() => {
-                  onChange(newState)
-                })
-                return newState
+              const newState = produce(config, (draft) => {
+                draft.switchSpeakerKeywords = value
               })
+
+              onChange(newState)
             }}
           />
         </FormGroup>
