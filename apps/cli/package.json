@@ -1,6 +1,6 @@
 {
   "name": "migpt-cli",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "bin": {
     "migpt": "dist/index.js"
   },
