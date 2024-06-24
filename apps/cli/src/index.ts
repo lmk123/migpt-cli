@@ -18,7 +18,7 @@ program
   .action((name) => {
     const defaults = path.join(__dirname, '../migpt.defaults.json')
     const robotDir = path.resolve(name)
-    const newConfig = path.join(robotDir, './migpt.json')
+    const newConfig = path.join(robotDir, './migptgui.json')
     fse.copySync(defaults, newConfig)
     console.log('创建机器人成功，机器人位置：')
     console.log(robotDir)
@@ -34,7 +34,7 @@ program
   .description('启动机器人。')
   .argument('<name>', '保存有机器人数据的文件夹的名字。')
   .action((name) => {
-    const json = fse.readJSONSync(path.join(name, './migpt.json'))
+    const json = fse.readJSONSync(path.join(name, './migptgui.json'))
     run(json, name)
   })
 

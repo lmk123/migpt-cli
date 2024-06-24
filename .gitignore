@@ -25,5 +25,5 @@ Thumbs.db
 /.nx
 /apps/cli/.bot.json
 /apps/cli/.mi.json
-/apps/cli/migpt.json
+/apps/cli/migptgui.json
 /apps/gui-web/webpack-report.html

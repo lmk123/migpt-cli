@@ -60,7 +60,7 @@ export function App() {
             <Button
               icon={'export'}
               onClick={() => {
-                exportJSON(config, 'migpt.json')
+                exportJSON(config, 'migptgui.json')
               }}
             >
               导出
