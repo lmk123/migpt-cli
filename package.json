@@ -6,7 +6,8 @@
     "build-all": "npx nx run-many --target=build",
     "u": "npx -y npm-check-updates -ws --root -u -x eslint,open",
     "pub-cli": "npx nx run migpt-cli:build --verbose && npm publish --access public -w apps/cli",
-    "pub-options": "npx nx run @migptgui/options:build --verbose && npm publish --access public -w packages/options"
+    "pub-options": "npx nx run @migptgui/options:build --verbose && npm publish --access public -w packages/options",
+    "pub-controller": "npx nx run @migptgui/controller:build --verbose && npm publish --access public -w packages/controller"
   },
   "private": true,
   "devDependencies": {

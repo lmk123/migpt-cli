@@ -4,7 +4,7 @@ import * as path from 'node:path'
 import fse from 'fs-extra'
 import { program } from 'commander'
 import { runServer } from './server'
-import { run } from './childCtrl'
+import { run } from '@migptgui/controller'
 
 program
   .name('migpt-cli')

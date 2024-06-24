@@ -2,7 +2,7 @@ import * as path from 'node:path'
 import express from 'express'
 import open from 'open'
 import * as os from 'node:os'
-import { getStatus, type RunConfig, run, stop } from './childCtrl'
+import { getStatus, type RunConfig, run, stop } from '@migptgui/controller'
 import fse from 'fs-extra'
 
 export function runServer(options?: { open?: boolean; port?: number }) {

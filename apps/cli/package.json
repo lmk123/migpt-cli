@@ -16,6 +16,7 @@
     "start": "node dist/index.js server"
   },
   "dependencies": {
+    "@migptgui/controller": "*",
     "commander": "^12.1.0",
     "express": "^4.19.2",
     "fs-extra": "^11.2.0",

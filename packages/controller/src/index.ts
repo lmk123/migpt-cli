@@ -41,9 +41,23 @@ function killChild() {
   })
 }
 
+function isESM() {
+  try {
+    require.resolve('@migptgui/controller')
+    return false
+  } catch {
+    return true
+  }
+}
+
+const childFilePath = path.join(
+  __dirname,
+  './child_process' + (isESM() ? '.mjs' : '.js'),
+)
+
 export async function run(config: RunConfig, cwd?: string) {
   await killChild()
-  child = childProcess.fork(path.join(__dirname, './child.js'), {
+  child = childProcess.fork(childFilePath, {
     env: config.env,
     cwd,
   })
