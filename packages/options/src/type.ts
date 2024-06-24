@@ -4,7 +4,8 @@ export type SpeakerConfig = Omit<
   Partial<MiGPTConfig['speaker']>,
   'ttsCommand' | 'wakeUpCommand' | 'playingCommand' | 'tts'
 > & {
-  // 举例，MiGPTConfig 里给 `speaker.tts` 的类型是 `TTSProvider`，但在网页当中，input 输入框的类型是 string // 重写一些不适合用在网页里的类型。
+  // 重写一些字段的类型，以适用于网页中的情况。
+  // 举例，MiGPTConfig 里给 `speaker.tts` 的类型是 `TTSProvider`，但在网页当中，input 输入框的类型是 string。
   tts?: string
   ttsCommand?: (number | undefined)[]
   wakeUpCommand?: (number | undefined)[]
@@ -17,7 +18,7 @@ export interface WholeConfig {
    * @see https://github.com/idootop/mi-gpt/blob/main/docs/settings.md#migptjs
    */
   config: {
-    systemTemplate: NonNullable<MiGPTConfig['systemTemplate']>
+    systemTemplate: MiGPTConfig['systemTemplate']
     master: NonNullable<MiGPTConfig['master']>
     bot: NonNullable<MiGPTConfig['bot']>
     room: NonNullable<MiGPTConfig['room']>

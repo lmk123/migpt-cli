@@ -7,11 +7,26 @@ import { Env } from './Env'
 import { type WholeConfig } from './type'
 import { H3 } from '@blueprintjs/core'
 
+function normalizeConfig(config: WholeConfig) {
+  // 这里还是要用 immer，否则会报错
+  return produce(config, (draft) => {
+    // 传空字符串会导致系统模版被清空。
+    // 未来应该在界面上给个选项，允许用户选择不使用系统模版。
+    if (draft.config.systemTemplate === '') {
+      delete draft.config.systemTemplate
+    }
+  })
+}
+
 export function Options(props: {
   config: WholeConfig
   onChange: (config: WholeConfig) => void
 }) {
-  const { config, onChange } = props
+  const { config, onChange: o } = props
+
+  const onChange = (config: WholeConfig) => {
+    o(normalizeConfig(config))
+  }
 
   return (
     <div className={'tw-space-y-6'}>
