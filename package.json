@@ -9,6 +9,7 @@
     "pub-server": "npx nx run migpt-server:build --verbose && npm publish --access public -w apps/server",
     "pub-options": "npx nx run @migptgui/options:build --verbose && npm publish --access public -w packages/options",
     "pub-controller": "npx nx run @migptgui/controller:build --verbose && npm publish --access public -w packages/controller",
+    "pub-gui": "npx nx run @migptgui/gui:build --verbose && npm publish --access public -w packages/gui",
     "pub-server-api": "npx nx run @migptgui/server:build --verbose && npm publish --access public -w packages/server"
   },
   "private": true,
