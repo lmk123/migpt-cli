@@ -26,4 +26,4 @@ Thumbs.db
 /apps/cli/.bot.json
 /apps/cli/.mi.json
 /apps/cli/migpt.json
-/packages/gui-web/webpack-report.html
+/apps/gui-web/webpack-report.html
