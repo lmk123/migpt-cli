@@ -18,7 +18,7 @@ export interface WholeConfig {
    * @see https://github.com/idootop/mi-gpt/blob/main/docs/settings.md#migptjs
    */
   config: {
-    systemTemplate: MiGPTConfig['systemTemplate']
+    systemTemplate?: MiGPTConfig['systemTemplate']
     master: NonNullable<MiGPTConfig['master']>
     bot: NonNullable<MiGPTConfig['bot']>
     room: NonNullable<MiGPTConfig['room']>

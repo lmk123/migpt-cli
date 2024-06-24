@@ -2,7 +2,6 @@ import { type WholeConfig } from './type'
 
 export const defaults: WholeConfig = {
   config: {
-    systemTemplate: '',
     bot: {
       name: '傻妞',
       profile: '性别女，性格乖巧可爱，喜欢搞怪，爱吃醋。',
