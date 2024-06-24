@@ -1,4 +1,4 @@
-import { Options, defaults } from '@mgc/options'
+import { Options, defaults, exportJSON, importJSON } from '@mgc/options'
 import {
   Alignment,
   AnchorButton,
@@ -7,7 +7,6 @@ import {
   Navbar,
 } from '@blueprintjs/core'
 import { useState } from 'react'
-import { ImportJSON } from './ImportJSON'
 import * as apis from './apis'
 
 FocusStyleManager.onlyShowFocusOnTabs()
@@ -48,36 +47,20 @@ export function App() {
             >
               停止
             </Button>
-            <ImportJSON
-              onJSON={(json) => {
-                setConfig(json as any)
+            <Button
+              icon={'import'}
+              onClick={() => {
+                importJSON().then((json) => {
+                  setConfig(json as any)
+                })
               }}
-            />
+            >
+              导入
+            </Button>
             <Button
               icon={'export'}
               onClick={() => {
-                // 将 JSON 数据转换为字符串
-                const jsonString = JSON.stringify(config, null, 2)
-                // 创建一个 Blob 对象
-                const blob = new Blob([jsonString], {
-                  type: 'application/json',
-                })
-                // 创建一个链接元素
-                const link = document.createElement('a')
-                // 创建一个对象 URL
-                const url = URL.createObjectURL(blob)
-                // 设置链接的 href 属性
-                link.href = url
-                // 设置下载文件的名称
-                link.download = 'migpt.json'
-                // 将链接元素添加到文档中
-                document.body.appendChild(link)
-                // 触发点击事件下载文件
-                link.click()
-                // 从文档中移除链接元素
-                document.body.removeChild(link)
-                // 释放对象 URL
-                URL.revokeObjectURL(url)
+                exportJSON(config, 'migpt.json')
               }}
             >
               导出
