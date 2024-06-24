@@ -1,11 +1,7 @@
-import { Button, Card, FormGroup, H5, InputGroup } from '@blueprintjs/core'
+import { Card, FormGroup, H5, InputGroup } from '@blueprintjs/core'
 import { produce } from 'immer'
 
 type EnvConfig = {
-  OPENAI_API_KEY?: string
-  OPENAI_MODEL?: string
-  OPENAI_BASE_URL?: string
-  AZURE_OPENAI_API_KEY?: string
   AUDIO_SILENT?: string
   AUDIO_BEEP?: string
   AUDIO_ACTIVE?: string
@@ -21,63 +17,6 @@ export function Env(props: {
 
   return (
     <div className={'tw-space-y-4'}>
-      <Card>
-        <H5>AI 服务</H5>
-        <p>
-          <a href="https://migptgui.com/docs/apply/" target={'_blank'}>
-            点击查看 AI 服务申请教程
-          </a>
-        </p>
-        <FormGroup label={'OPENAI_API_KEY'} inline>
-          <InputGroup
-            required
-            value={config.OPENAI_API_KEY || ''}
-            onValueChange={(newVal) => {
-              const newState = produce(config, (draft) => {
-                draft.OPENAI_API_KEY = newVal
-              })
-              onChange(newState)
-            }}
-          />
-        </FormGroup>
-        <FormGroup label={'OPENAI_MODEL'} inline>
-          <InputGroup
-            required
-            value={config.OPENAI_MODEL || ''}
-            onValueChange={(newVal) => {
-              const newState = produce(config, (draft) => {
-                draft.OPENAI_MODEL = newVal
-              })
-              onChange(newState)
-            }}
-          />
-        </FormGroup>
-        <FormGroup label={'OPENAI_BASE_URL'} inline>
-          <InputGroup
-            required
-            value={config.OPENAI_BASE_URL || ''}
-            onValueChange={(newVal) => {
-              const newState = produce(config, (draft) => {
-                draft.OPENAI_BASE_URL = newVal
-              })
-              onChange(newState)
-            }}
-            rightElement={<Button>/chat/completions</Button>}
-          />
-        </FormGroup>
-        <FormGroup label={'AZURE_OPENAI_API_KEY'} inline>
-          <InputGroup
-            value={config.AZURE_OPENAI_API_KEY || ''}
-            onValueChange={(newVal) => {
-              const newState = produce(config, (draft) => {
-                draft.AZURE_OPENAI_API_KEY = newVal
-              })
-              onChange(newState)
-            }}
-          />
-        </FormGroup>
-      </Card>
-
       <Card>
         <H5>提示音</H5>
         <FormGroup label={'AUDIO_SILENT'} inline>

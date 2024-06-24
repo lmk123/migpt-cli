@@ -6,6 +6,7 @@ import { Speaker } from './Speaker'
 import { Env } from './Env'
 import { type WholeConfig } from './type'
 import { H3 } from '@blueprintjs/core'
+import { Ai } from './Ai'
 
 function normalizeConfig(config: WholeConfig) {
   // 这里还是要用 immer，否则会报错
@@ -60,12 +61,24 @@ export function Options(props: {
         />
       </div>
       <div>
-        <H3>AI / TTS</H3>
+        <H3>AI 服务</H3>
+        <Ai
+          config={config.env}
+          onChange={(aiConfig) => {
+            const newState = produce(config, (draft) => {
+              Object.assign(draft.env, aiConfig)
+            })
+            onChange(newState)
+          }}
+        />
+      </div>
+      <div>
+        <H3>语音服务</H3>
         <Env
           config={config.env}
           onChange={(envConfig) => {
             const newState = produce(config, (draft) => {
-              draft.env = envConfig
+              Object.assign(draft.env, envConfig)
             })
             onChange(newState)
           }}
