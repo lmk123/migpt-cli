@@ -16,7 +16,10 @@
     "build:mjs": "tsc -p tsconfig.build.json -m ESNext --moduleResolution Bundler -d && js-to-mjs dist",
     "build:cjs": "tsc -p tsconfig.build.json -m NodeNext",
     "build": "npm run build:mjs && npm run build:cjs",
-    "dev": "nodemon --watch src -e ts,tsx --exec \"npm run build\""
+    "dev:mjs": "tsc -m ESNext --moduleResolution Bundler -d && js-to-mjs dist",
+    "dev:cjs": "tsc -m NodeNext",
+    "dev": "npm run dev:mjs && npm run dev:cjs",
+    "dev:watch": "nodemon --watch src -e ts,tsx --exec \"npm run dev\""
   },
   "dependencies": {
     "@blueprintjs/core": "^5.10.3",
