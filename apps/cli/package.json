@@ -16,16 +16,13 @@
     "start": "node dist/index.js server"
   },
   "dependencies": {
-    "@migptgui/controller": "*",
+    "@migptgui/controller": "^1.0.0",
+    "@migptgui/server": "^1.0.0",
     "commander": "^12.1.0",
-    "express": "^4.19.2",
-    "fs-extra": "^11.2.0",
-    "mi-gpt": "^4.0.0",
-    "open": "^8.4.2"
+    "fs-extra": "^11.2.0"
   },
   "devDependencies": {
     "@hcfy/js-to-mjs": "^1.1.0",
-    "@types/express": "^4.17.21",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.14.7",
     "typescript": "^5.5.2"

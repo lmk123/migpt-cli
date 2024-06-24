@@ -5,14 +5,19 @@ import * as os from 'node:os'
 import { getStatus, type RunConfig, run, stop } from '@migptgui/controller'
 import fse from 'fs-extra'
 
-export function runServer(options?: { open?: boolean; port?: number }) {
+export function runServer(options?: {
+  open?: boolean
+  port?: number
+  staticPath?: string
+}) {
   const port = options?.port || 36592
-  const isAutoOpen = options?.open == null ? true : options.open
 
   const app = express()
   app.use(express.json())
 
-  app.use(express.static(path.join(__dirname, './web')))
+  if (options?.staticPath) {
+    app.use(express.static(options.staticPath))
+  }
 
   app.get('/api/status', async (req, res) => {
     res.json(getStatus())
@@ -39,7 +44,7 @@ export function runServer(options?: { open?: boolean; port?: number }) {
   })
 
   app.listen(port, () => {
-    if (isAutoOpen) {
+    if (options?.open) {
       open(`http://localhost:${port}`)
     }
   })

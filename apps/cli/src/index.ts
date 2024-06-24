@@ -3,7 +3,7 @@
 import * as path from 'node:path'
 import fse from 'fs-extra'
 import { program } from 'commander'
-import { runServer } from './server'
+import { runServer } from '@migptgui/server'
 import { run } from '@migptgui/controller'
 
 program
@@ -42,9 +42,12 @@ program
   .command('server')
   .description('启动后台服务。')
   .option('-p, --port <number>', '后台服务的端口。')
-  .option('--open', '是否在浏览器中打开配置页面。')
   .action((str, options) => {
-    runServer(options)
+    runServer({
+      port: options.port,
+      open: true,
+      staticPath: path.join(__dirname, './web/'),
+    })
   })
 
 program.parse(process.argv)
