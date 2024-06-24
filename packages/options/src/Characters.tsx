@@ -97,7 +97,7 @@ export function Characters(props: {
           <TextArea
             autoResize
             required
-            value={config.bot.profile}
+            value={config.bot.profile || ''}
             onChange={(event) => {
               const newVal = event.target.value
               const newState = produce(config, (draft) => {
@@ -113,7 +113,7 @@ export function Characters(props: {
         <FormGroup label={'名称'} helperText={'主人名称（我自己）'} inline>
           <InputGroup
             required
-            value={config.master.name}
+            value={config.master.name || ''}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
                 draft.master.name = newVal
@@ -126,7 +126,7 @@ export function Characters(props: {
           <TextArea
             required
             autoResize
-            value={config.master.profile}
+            value={config.master.profile || ''}
             onChange={(event) => {
               const newVal = event.target.value
               const newState = produce(config, (draft) => {
@@ -142,7 +142,7 @@ export function Characters(props: {
         <FormGroup label={'名称'} helperText={'会话群名称'} inline>
           <InputGroup
             required
-            value={config.room.name}
+            value={config.room.name || ''}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
                 draft.room.name = newVal
@@ -183,7 +183,7 @@ export function Characters(props: {
           <TextArea
             autoResize
             fill
-            value={config.systemTemplate}
+            value={config.systemTemplate || ''}
             onChange={(event) => {
               const newVal = event.target.value
               const newState = produce(config, (draft) => {
