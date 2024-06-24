@@ -1,4 +1,4 @@
-import { Options, defaults, exportJSON, importJSON } from '@mgg/options'
+import { Options, defaults, exportJSON, importJSON } from '@migptgui/options'
 import {
   Alignment,
   AnchorButton,

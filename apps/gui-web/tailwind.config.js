@@ -6,7 +6,7 @@ module.exports = {
   content: [
     './src/**/*.{ts,tsx,html,js}',
     path.join(
-      path.dirname(require.resolve('@mgg/options')),
+      path.dirname(require.resolve('@migptgui/options')),
       '**/*.{ts,tsx,html,js}',
     ),
   ],

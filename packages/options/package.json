@@ -1,5 +1,5 @@
 {
-  "name": "@mgg/options",
+  "name": "@migptgui/options",
   "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,6 +20,9 @@
     "dev": "npm run dev:mjs && npm run dev:cjs",
     "dev:watch": "nodemon --watch src -e ts,tsx --exec \"npm run dev\""
   },
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "@blueprintjs/core": "^5.10.3",
     "@blueprintjs/icons": "^5.9.0",
