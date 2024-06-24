@@ -1,5 +1,5 @@
 {
-  "name": "@private/gui-web",
+  "name": "@mgc/gui-web",
   "version": "1.0.0",
   "private": true,
   "scripts": {
