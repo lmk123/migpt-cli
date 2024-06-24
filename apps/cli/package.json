@@ -12,7 +12,7 @@
     "clean": "rm -rf dist",
     "build": "npm run clean && tsc -p tsconfig.build.json -m NodeNext && npm run cp-web",
     "dev": "tsc -p tsconfig.build.json -m NodeNext -w",
-    "cp-web": "mkdir -p dist/web/ && cp -rf ../../packages/gui-web/dist/* dist/web/",
+    "cp-web": "mkdir -p dist/web/ && cp -rf ../gui-web/dist/* dist/web/",
     "start": "node dist/index.js server"
   },
   "dependencies": {
