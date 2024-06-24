@@ -1,4 +1,4 @@
-import { Options, defaults, exportJSON, importJSON } from '@mgc/options'
+import { Options, defaults, exportJSON, importJSON } from '@mgg/options'
 import {
   Alignment,
   AnchorButton,
