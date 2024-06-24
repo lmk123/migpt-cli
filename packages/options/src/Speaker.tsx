@@ -113,6 +113,34 @@ export function Speaker(props: {
       </Card>
 
       <Card>
+        <H5>单次对话</H5>
+        <FormGroup
+          label={'调用 AI 关键词'}
+          helperText={
+            <>
+              <p>当消息以关键词开头时，会调用 AI 来响应用户消息。</p>
+              <div>
+                举个例子：当你对小爱说“请告诉我……”或者“傻妞，你觉得……”时，由于这两条消息都是以“请”或者“傻妞”开头，所以会调用
+                AI 来回答。
+              </div>
+            </>
+          }
+          inline
+        >
+          <MultiInput
+            value={config.callAIKeywords}
+            onChange={(value) => {
+              const newState = produce(config, (draft) => {
+                draft.callAIKeywords = value
+              })
+
+              onChange(newState)
+            }}
+          />
+        </FormGroup>
+      </Card>
+
+      <Card>
         <H5>连续对话（唤醒模式）</H5>
         <FormGroup
           label={'连续对话'}
@@ -236,25 +264,6 @@ export function Speaker(props: {
       </Card>
 
       <Card>
-        <H5>关键词</H5>
-        <FormGroup
-          label={'调用 AI 关键词（单次）'}
-          helperText={'当消息以关键词开头时，会调用 AI 来响应用户消息。'}
-          inline
-        >
-          <MultiInput
-            value={config.callAIKeywords}
-            onChange={(value) => {
-              const newState = produce(config, (draft) => {
-                draft.callAIKeywords = value
-              })
-
-              onChange(newState)
-            }}
-          />
-        </FormGroup>
-      </Card>
-      <Card>
         <H5>提示语</H5>
 
         <FormGroup
@@ -335,39 +344,6 @@ export function Speaker(props: {
             onChange={(value) => {
               const newState = produce(config, (draft) => {
                 draft.onAIError = value
-              })
-
-              onChange(newState)
-            }}
-          />
-        </FormGroup>
-      </Card>
-      <Card>
-        <H5>其它</H5>
-        <FormGroup label={'TTS 引擎'} inline>
-          <InputGroup
-            required
-            value={config.tts || ''}
-            onValueChange={(newVal) => {
-              const newState = produce(config, (draft) => {
-                draft.tts = newVal
-              })
-
-              onChange(newState)
-            }}
-          />
-        </FormGroup>
-
-        <FormGroup
-          label={'切换音色关键词'}
-          helperText={'只有配置了第三方 TTS 引擎时才有效'}
-          inline
-        >
-          <MultiInput
-            value={config.switchSpeakerKeywords}
-            onChange={(value) => {
-              const newState = produce(config, (draft) => {
-                draft.switchSpeakerKeywords = value
               })
 
               onChange(newState)

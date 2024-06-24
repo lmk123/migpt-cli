@@ -3,10 +3,10 @@ import _set from 'lodash/set.js'
 import _get from 'lodash/get.js'
 import { produce } from 'immer'
 import { Speaker } from './Speaker'
-import { Env } from './Env'
 import { type WholeConfig } from './type'
 import { H3 } from '@blueprintjs/core'
 import { Ai } from './Ai'
+import { Tts } from './Tts'
 
 function normalizeConfig(config: WholeConfig) {
   // 这里还是要用 immer，否则会报错
@@ -26,7 +26,9 @@ export function Options(props: {
   const { config, onChange: o } = props
 
   const onChange = (config: WholeConfig) => {
-    o(normalizeConfig(config))
+    const n = normalizeConfig(config)
+    // console.log(n)
+    o(n)
   }
 
   return (
@@ -74,11 +76,15 @@ export function Options(props: {
       </div>
       <div>
         <H3>语音服务</H3>
-        <Env
-          config={config.env}
-          onChange={(envConfig) => {
+        <Tts
+          config={{
+            speaker: config.config.speaker,
+            env: config.env,
+          }}
+          onChange={(ttsConfig) => {
             const newState = produce(config, (draft) => {
-              Object.assign(draft.env, envConfig)
+              Object.assign(draft.env, ttsConfig.env)
+              Object.assign(draft.config.speaker, ttsConfig.speaker)
             })
             onChange(newState)
           }}

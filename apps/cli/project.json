@@ -4,7 +4,7 @@
       "dependsOn": [
         "^build",
         {
-          "projects": ["@private/gui-web"],
+          "projects": ["@mgc/gui-web"],
           "target": "build"
         }
       ]
