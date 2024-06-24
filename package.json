@@ -1,5 +1,5 @@
 {
-  "name": "@migpt/root",
+  "name": "@mgc/root",
   "version": "0.0.0",
   "scripts": {
     "clean-all": "npx nx run-many --target=clean",
