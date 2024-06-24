@@ -3,13 +3,7 @@
 import * as path from 'node:path'
 import fse from 'fs-extra'
 import { program } from 'commander'
-import { runServer } from '@migptgui/server'
 import { run } from '@migptgui/controller'
-
-program
-  .name('migpt-cli')
-  .description('用于运行 MiGPT 的命令行工具。')
-  .version('4.0.0')
 
 program
   .command('create')
@@ -38,16 +32,4 @@ program
     run(json, name)
   })
 
-program
-  .command('server')
-  .description('启动后台服务。')
-  .option('-p, --port <number>', '后台服务的端口。')
-  .action((str, options) => {
-    runServer({
-      port: options.port,
-      open: true,
-      staticPath: path.join(__dirname, './web/'),
-    })
-  })
-
-program.parse(process.argv)
+program.parse()
