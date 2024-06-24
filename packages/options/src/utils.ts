@@ -1,9 +1,23 @@
 export function exportJSON(config: object, name = 'data.json') {
   // 将 JSON 数据转换为字符串
   const jsonString = JSON.stringify(config, null, 2)
-  // 创建一个 Blob 对象
-  const blob = new Blob([jsonString], {
+
+  exportFile([jsonString], {
     type: 'application/json',
+    name,
+  })
+}
+
+export function exportFile(
+  data: BlobPart[],
+  options?: {
+    type?: string
+    name?: string
+  },
+) {
+  // 创建一个 Blob 对象
+  const blob = new Blob(data, {
+    type: options?.type,
   })
   // 创建一个链接元素
   const link = document.createElement('a')
@@ -12,7 +26,7 @@ export function exportJSON(config: object, name = 'data.json') {
   // 设置链接的 href 属性
   link.href = url
   // 设置下载文件的名称
-  link.download = name
+  link.download = options?.name || ''
   // 将链接元素添加到文档中
   document.body.appendChild(link)
   // 触发点击事件下载文件
@@ -28,6 +42,9 @@ export function importJSON() {
     const input = document.createElement('input')
     input.type = 'file'
     input.accept = '.json'
+    input.oncancel = () => {
+      reject('User canceled')
+    }
     input.onchange = (event) => {
       const file = (event.target as HTMLInputElement).files?.[0]
       if (!file) {
