@@ -230,11 +230,7 @@ export function Speaker(props: {
             pattern={'\\d+'}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
-                if (newVal == null) {
-                  delete draft.checkInterval
-                } else {
-                  draft.checkInterval = newVal
-                }
+                draft.checkInterval = newVal == null ? undefined : newVal
               })
               onChange(newState)
             }}
@@ -258,11 +254,7 @@ export function Speaker(props: {
             pattern={'\\d+'}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
-                if (newVal == null) {
-                  delete draft.checkTTSStatusAfter
-                } else {
-                  draft.checkTTSStatusAfter = newVal
-                }
+                draft.checkTTSStatusAfter = newVal == null ? undefined : newVal
               })
 
               onChange(newState)
