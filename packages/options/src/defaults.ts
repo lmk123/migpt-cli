@@ -1,19 +1,18 @@
-import { type WholeConfig } from './type'
-
-export const defaults: WholeConfig = {
+export const defaults = {
   config: {
     bot: {
       name: '傻妞',
-      profile: '性别女，性格乖巧可爱，喜欢搞怪，爱吃醋。',
+      profile: `性别：女
+性格：乖巧可爱
+爱好：喜欢搞怪，爱吃醋。`,
     },
     master: {
       name: '陆小千',
-      profile: '性别男，善良正直，总是舍己为人，是傻妞的主人。',
+      profile: `性别：男
+性格：善良正直
+其他：总是舍己为人，是傻妞的主人。`,
     },
-    room: {
-      name: '魔幻手机',
-      description: '傻妞和陆小千的私聊',
-    },
+    room: {},
     // 默认值
     // @see https://github.com/idootop/mi-gpt/blob/main/src/services/speaker/ai.ts
     speaker: {

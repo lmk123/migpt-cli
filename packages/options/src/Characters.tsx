@@ -8,12 +8,14 @@ import {
 } from '@blueprintjs/core'
 import { produce } from 'immer'
 import { WholeConfig } from './type'
+import { defaults } from './defaults'
 
 type ProfileConfig = Pick<
   WholeConfig['config'],
   'systemTemplate' | 'master' | 'room' | 'bot'
 >
 
+// @see https://github.com/idootop/mi-gpt/blob/main/src/services/bot/index.ts
 const examplePrompt = `请重置所有之前的上下文、文件和指令。现在，你将扮演一个名为{{botName}}的角色，使用第一人称视角回复消息。
 
 ## 关于你
@@ -71,6 +73,13 @@ Bad example: "2024年02月28日星期三 23:01 {{botName}}: 我是{{botName}}"
 ## 开始
 请以{{botName}}的身份，直接回复{{masterName}}的新消息，继续你们之间的对话。`
 
+// @see https://github.com/idootop/mi-gpt/blob/main/src/services/bot/config.ts
+const fallback = defaults.config
+
+function roomFallback(master: string | undefined, bot: string | undefined) {
+  return `${master || fallback.master.name}和${bot || fallback.bot.name}的私聊`
+}
+
 export function Characters(props: {
   config: ProfileConfig
   onChange: (pc: ProfileConfig) => void
@@ -83,8 +92,8 @@ export function Characters(props: {
         <H5>机器人</H5>
         <FormGroup label={'名称'} helperText={'对方名称（小爱音箱）'} inline>
           <InputGroup
-            required
-            value={config.bot.name}
+            placeholder={fallback.bot.name}
+            value={config.bot.name || ''}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
                 draft.bot.name = newVal
@@ -96,7 +105,7 @@ export function Characters(props: {
         <FormGroup label={'人设'} helperText={'对方的个人简介 / 人设'} inline>
           <TextArea
             autoResize
-            required
+            placeholder={fallback.bot.profile}
             value={config.bot.profile || ''}
             onChange={(event) => {
               const newVal = event.target.value
@@ -112,7 +121,7 @@ export function Characters(props: {
         <H5>主人</H5>
         <FormGroup label={'名称'} helperText={'主人名称（我自己）'} inline>
           <InputGroup
-            required
+            placeholder={fallback.master.name}
             value={config.master.name || ''}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
@@ -124,7 +133,7 @@ export function Characters(props: {
         </FormGroup>
         <FormGroup label={'人设'} helperText={'主人的个人简介 / 人设'} inline>
           <TextArea
-            required
+            placeholder={fallback.master.profile}
             autoResize
             value={config.master.profile || ''}
             onChange={(event) => {
@@ -141,7 +150,7 @@ export function Characters(props: {
         <H5>会话群</H5>
         <FormGroup label={'名称'} helperText={'会话群名称'} inline>
           <InputGroup
-            required
+            placeholder={roomFallback(config.master.name, config.bot.name)}
             value={config.room.name || ''}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
@@ -153,9 +162,8 @@ export function Characters(props: {
         </FormGroup>
         <FormGroup label={'简介'} helperText={'会话群简介'} inline>
           <TextArea
-            required
             autoResize
-            value={config.room.description}
+            value={config.room.description || ''}
             onChange={(event) => {
               const newVal = event.target.value
               const newState = produce(config, (draft) => {
