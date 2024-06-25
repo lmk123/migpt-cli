@@ -66,7 +66,7 @@ export function App() {
             <Button
               icon={'export'}
               onClick={() => {
-                exportJSON(config, 'migptgui.json')
+                exportJSON(strip(config), 'migptgui.json')
               }}
             >
               导出
@@ -90,7 +90,7 @@ export function App() {
             ref={setFormEle}
             onSubmit={(event) => {
               event.preventDefault()
-              apis.run(config).then(
+              apis.run(strip(config)).then(
                 () => {
                   alert('启动成功！你可以切换回终端内查看运行日志。')
                 },
@@ -103,7 +103,7 @@ export function App() {
             <Options
               config={config}
               onChange={(config) => {
-                console.log('config and stripped config', config, strip(config))
+                // console.log('config and stripped config', config, strip(config))
                 setConfig(config)
               }}
             />
