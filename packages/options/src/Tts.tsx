@@ -28,7 +28,7 @@ export function Tts(props: {
         <H5>自定义 TTS 引擎</H5>
         <FormGroup label={'TTS 引擎'} inline>
           <InputGroup
-            required
+            placeholder={'xiaoai'}
             value={config.speaker.tts || ''}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {

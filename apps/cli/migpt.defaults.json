@@ -26,20 +26,12 @@
       "onAIAsking": ["思考中"],
       "onAIReplied": ["回答完毕"],
       "onExitAI": ["已退出唤醒模式"],
-      "exitKeepAliveAfter": 60,
-      "streamResponse": true,
-      "checkInterval": 1000
+      "streamResponse": true
     }
   },
   "env": {
-    "OPENAI_API_KEY": "xxxxxxx-xxxxxxx-xxxxxxx-xxxxxxx",
-    "OPENAI_MODEL": "gpt-3.5-turbo",
-    "OPENAI_BASE_URL": "https://aaaa.bbbbb.com/api/v1",
-    "AZURE_OPENAI_API_KEY": "",
-    "AUDIO_SILENT": "",
-    "AUDIO_BEEP": "",
-    "AUDIO_ACTIVE": "",
-    "AUDIO_ERROR": "",
-    "TTS_BASE_URL": ""
+    "OPENAI_API_KEY": "",
+    "OPENAI_MODEL": "",
+    "OPENAI_BASE_URL": ""
   }
 }

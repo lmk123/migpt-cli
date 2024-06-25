@@ -29,7 +29,7 @@ export function NumberText(props: NumberTextProps) {
       onValueChange={(newValue) => {
         const n = toNum(newValue)
 
-        if (typeof n === 'number' && isNaN(n)) return
+        if (Number.isNaN(n)) return
 
         onValueChange(n)
       }}

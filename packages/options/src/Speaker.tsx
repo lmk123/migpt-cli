@@ -200,7 +200,7 @@ export function Speaker(props: {
           inline
         >
           <NumberText
-            required
+            placeholder={'30'}
             value={
               config.exitKeepAliveAfter == null
                 ? null
@@ -224,13 +224,17 @@ export function Speaker(props: {
           inline
         >
           <NumberText
-            required
+            placeholder={'1000'}
             value={config.checkInterval == null ? null : config.checkInterval}
             min={500}
             pattern={'\\d+'}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
-                draft.checkInterval = newVal == null ? undefined : newVal
+                if (newVal == null) {
+                  delete draft.checkInterval
+                } else {
+                  draft.checkInterval = newVal
+                }
               })
               onChange(newState)
             }}
@@ -244,7 +248,7 @@ export function Speaker(props: {
           inline
         >
           <NumberText
-            required
+            placeholder={'3'}
             value={
               config.checkTTSStatusAfter == null
                 ? null
@@ -254,7 +258,11 @@ export function Speaker(props: {
             pattern={'\\d+'}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
-                draft.checkTTSStatusAfter = newVal == null ? undefined : newVal
+                if (newVal == null) {
+                  delete draft.checkTTSStatusAfter
+                } else {
+                  draft.checkTTSStatusAfter = newVal
+                }
               })
 
               onChange(newState)
