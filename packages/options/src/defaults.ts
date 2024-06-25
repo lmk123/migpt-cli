@@ -1,4 +1,6 @@
-export const defaults = {
+import { WholeConfig } from './type'
+
+export const defaults: WholeConfig = {
   config: {
     bot: {
       name: '傻妞',
