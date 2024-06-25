@@ -1,6 +1,6 @@
 {
   "name": "@migptgui/gui",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "scripts": {
     "clean": "rm -rf dist",
     "checktype": "tsc --noEmit",
