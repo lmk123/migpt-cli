@@ -11,6 +11,7 @@ import {
 import { produce } from 'immer'
 import { WholeConfig } from './type'
 import { defaults } from './defaults'
+import { useRef, useState } from 'react'
 
 type ProfileConfig = Pick<
   WholeConfig['config'],
@@ -94,10 +95,11 @@ export function Characters(props: {
   onChange: (pc: ProfileConfig) => void
 }) {
   const { config, onChange } = props
-
   const promptType = checkSystemTemplate(config.systemTemplate)
   const promptTypeIsCustom = config.systemTemplate != null
   const promptTypeIsNone = config.systemTemplate === ''
+
+  const textareaEleRef = useRef<HTMLTextAreaElement | null>()
 
   return (
     <div className={'tw-space-y-4'}>
@@ -116,6 +118,15 @@ export function Characters(props: {
                 }
               })
               onChange(newState)
+              if (type === 'custom') {
+                setTimeout(() => {
+                  if (textareaEleRef.current) {
+                    textareaEleRef.current.focus()
+                  } else {
+                    alert('非预期错误：系统模版输入框没有显示出来')
+                  }
+                })
+              }
             }}
             selectedValue={promptType}
           >
@@ -138,6 +149,9 @@ export function Characters(props: {
 
         {promptTypeIsCustom && (
           <TextArea
+            inputRef={(ele) => {
+              textareaEleRef.current = ele
+            }}
             autoResize
             placeholder={
               '留空则不使用系统模版，这意味着你将不带人设 / 记忆信息，直接跟 AI 对话。'
