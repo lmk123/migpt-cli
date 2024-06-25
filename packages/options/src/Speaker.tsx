@@ -150,11 +150,13 @@ export function Speaker(props: {
           inline
         >
           <Checkbox
-            checked={config.streamResponse}
+            checked={
+              config.streamResponse == null ? true : config.streamResponse
+            }
             onChange={(event) => {
               const newVal = event.target.checked
               const newState = produce(config, (draft) => {
-                draft.streamResponse = newVal
+                draft.streamResponse = newVal ? undefined : false
               })
               onChange(newState)
             }}

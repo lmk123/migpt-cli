@@ -1,6 +1,5 @@
 {
   "config": {
-    "systemTemplate": "",
     "bot": {
       "name": "曹操",
       "profile": "你是《三国演义》里的曹操。"
@@ -25,8 +24,7 @@
       "onEnterAI": ["进入唤醒模式"],
       "onAIAsking": ["思考中"],
       "onAIReplied": ["回答完毕"],
-      "onExitAI": ["已退出唤醒模式"],
-      "streamResponse": true
+      "onExitAI": ["已退出唤醒模式"]
     }
   },
   "env": {
