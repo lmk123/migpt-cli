@@ -24,13 +24,10 @@ export function MultiInput(props: {
           }}
         />
         <Button
+          disabled={count <= 1}
           icon={'delete'}
           className={'tw-ml-1'}
           onClick={() => {
-            if (value.length === 1) {
-              alert('至少保留一个')
-              return
-            }
             const v = [...value]
             v.splice(i, 1)
             onChange(v)

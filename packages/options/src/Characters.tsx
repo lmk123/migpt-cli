@@ -11,7 +11,7 @@ import {
 import { produce } from 'immer'
 import { WholeConfig } from './type'
 import { defaults } from './defaults'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 
 type ProfileConfig = Pick<
   WholeConfig['config'],
