@@ -80,7 +80,7 @@ Bad example: "2024年02月28日星期三 23:01 {{botName}}: 我是{{botName}}"
 const fallback = defaults.config
 
 function roomFallback(master: string | undefined, bot: string | undefined) {
-  return `${master || fallback.master.name}和${bot || fallback.bot.name}的私聊`
+  return `${master || fallback.master?.name}和${bot || fallback.bot?.name}的私聊`
 }
 
 function checkSystemTemplate(template: string | undefined) {
@@ -178,11 +178,11 @@ export function Characters(props: {
         >
           <InputGroup
             disabled={promptTypeIsNone}
-            placeholder={fallback.bot.name}
-            value={config.bot.name || ''}
+            placeholder={fallback.bot?.name}
+            value={config.bot?.name || ''}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
-                draft.bot.name = newVal
+                ;(draft.bot || (draft.bot = {})).name = newVal || undefined
               })
               onChange(newState)
             }}
@@ -197,12 +197,12 @@ export function Characters(props: {
           <TextArea
             disabled={promptTypeIsNone}
             autoResize
-            placeholder={fallback.bot.profile}
-            value={config.bot.profile || ''}
+            placeholder={fallback.bot?.profile}
+            value={config.bot?.profile || ''}
             onChange={(event) => {
               const newVal = event.target.value
               const newState = produce(config, (draft) => {
-                draft.bot.profile = newVal
+                ;(draft.bot || (draft.bot = {})).profile = newVal || undefined
               })
               onChange(newState)
             }}
@@ -219,11 +219,12 @@ export function Characters(props: {
         >
           <InputGroup
             disabled={promptTypeIsNone}
-            placeholder={fallback.master.name}
-            value={config.master.name || ''}
+            placeholder={fallback.master?.name}
+            value={config.master?.name || ''}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
-                draft.master.name = newVal
+                ;(draft.master || (draft.master = {})).name =
+                  newVal || undefined
               })
               onChange(newState)
             }}
@@ -237,13 +238,14 @@ export function Characters(props: {
         >
           <TextArea
             disabled={promptTypeIsNone}
-            placeholder={fallback.master.profile}
+            placeholder={fallback.master?.profile}
             autoResize
-            value={config.master.profile || ''}
+            value={config.master?.profile || ''}
             onChange={(event) => {
               const newVal = event.target.value
               const newState = produce(config, (draft) => {
-                draft.master.profile = newVal
+                ;(draft.master || (draft.master = {})).profile =
+                  newVal || undefined
               })
               onChange(newState)
             }}
@@ -260,11 +262,11 @@ export function Characters(props: {
         >
           <InputGroup
             disabled={promptTypeIsNone}
-            placeholder={roomFallback(config.master.name, config.bot.name)}
-            value={config.room.name || ''}
+            placeholder={roomFallback(config.master?.name, config.bot?.name)}
+            value={config.room?.name || ''}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
-                draft.room.name = newVal
+                ;(draft.room || (draft.room = {})).name = newVal || undefined
               })
               onChange(newState)
             }}
@@ -279,11 +281,12 @@ export function Characters(props: {
           <TextArea
             disabled={promptTypeIsNone}
             autoResize
-            value={config.room.description || ''}
+            value={config.room?.description || ''}
             onChange={(event) => {
               const newVal = event.target.value
               const newState = produce(config, (draft) => {
-                draft.room.description = newVal
+                ;(draft.room || (draft.room = {})).description =
+                  newVal || undefined
               })
               onChange(newState)
             }}

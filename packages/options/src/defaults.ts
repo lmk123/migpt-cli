@@ -14,7 +14,6 @@ export const defaults: WholeConfig = {
 性格：善良正直
 其他：总是舍己为人，是傻妞的主人。`,
     },
-    room: {},
     // 默认值
     // @see https://github.com/idootop/mi-gpt/blob/main/src/services/speaker/ai.ts
     speaker: {
@@ -27,8 +26,6 @@ export const defaults: WholeConfig = {
       onAIAsking: ['让我先想想', '请稍等'],
       onAIReplied: ['我说完了', '还有其他问题吗'],
       onAIError: ['啊哦，出错了，请稍后再试吧！'],
-      streamResponse: true,
     },
   },
-  env: {},
 }

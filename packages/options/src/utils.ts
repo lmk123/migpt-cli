@@ -1,3 +1,7 @@
+import { WholeConfig } from './type'
+import { produce } from 'immer'
+import _isEmpty from 'lodash/isEmpty.js'
+
 export function exportJSON(config: object, name = 'data.json') {
   // 将 JSON 数据转换为字符串
   const jsonString = JSON.stringify(config, null, 2)
@@ -63,5 +67,41 @@ export function importJSON() {
       reader.readAsText(file)
     }
     input.click()
+  })
+}
+
+/**
+ * 删除配置中的 null / undefined / 空对象 / 数组中的空字符串
+ * @param config
+ */
+export function strip(config: WholeConfig) {
+  return produce(config, (draft) => {
+    // 遍历整个对象，删除值为 null / undefined / 空对象的字段，保留其它类型的值如数字和数组。
+    // 如果值是一个数组，则删除其中的空字符串
+    const clean = (obj: any) => {
+      // console.log('开始遍历对象：', JSON.stringify(obj))
+      for (const key in obj) {
+        if (obj[key] === null || obj[key] === undefined) {
+          // console.log('null / undefined，删除字段：', key)
+          delete obj[key]
+        } else if (typeof obj[key] === 'object') {
+          if (Array.isArray(obj[key])) {
+            // const l = obj[key].length
+            obj[key] = obj[key].filter((x) => x !== '')
+            // if (obj[key].length < l) {
+            //   console.log('删除 ' + key + ' 数组中的空字符串')
+            // }
+          } else {
+            clean(obj[key])
+          }
+          if (_isEmpty(obj[key]) && !Array.isArray(obj[key])) {
+            // console.log('删除空对象', key)
+            delete obj[key]
+          }
+        }
+      }
+    }
+
+    clean(draft)
   })
 }

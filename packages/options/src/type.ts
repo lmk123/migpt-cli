@@ -17,18 +17,14 @@ export interface WholeConfig {
    * MiGPT 的配置
    * @see https://github.com/idootop/mi-gpt/blob/main/docs/settings.md#migptjs
    */
-  config: {
-    systemTemplate?: MiGPTConfig['systemTemplate']
-    master: NonNullable<MiGPTConfig['master']>
-    bot: NonNullable<MiGPTConfig['bot']>
-    room: NonNullable<MiGPTConfig['room']>
+  config: Pick<MiGPTConfig, 'systemTemplate' | 'master' | 'bot' | 'room'> & {
     speaker: SpeakerConfig
   }
   /**
    * 运行 MiGPT 所需的环境变量
    * @see https://github.com/idootop/mi-gpt/blob/main/docs/settings.md#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F
    */
-  env: {
+  env?: {
     OPENAI_API_KEY?: string
     OPENAI_MODEL?: string
     OPENAI_BASE_URL?: string

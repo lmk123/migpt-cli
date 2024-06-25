@@ -7,7 +7,7 @@ interface TtsConfig {
     tts?: string
     switchSpeakerKeywords?: string[]
   }
-  env: {
+  env?: {
     AUDIO_SILENT?: string
     AUDIO_BEEP?: string
     AUDIO_ACTIVE?: string
@@ -42,9 +42,12 @@ export function Tts(props: {
 
         <FormGroup label={'TTS_BASE_URL'} inline>
           <InputGroup
-            value={config.env.TTS_BASE_URL || ''}
+            value={config.env?.TTS_BASE_URL || ''}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
+                if (!draft.env) {
+                  draft.env = {}
+                }
                 draft.env.TTS_BASE_URL = newVal
               })
               onChange(newState)
@@ -73,9 +76,12 @@ export function Tts(props: {
         <H5>提示音</H5>
         <FormGroup label={'AUDIO_SILENT'} inline>
           <InputGroup
-            value={config.env.AUDIO_SILENT || ''}
+            value={config.env?.AUDIO_SILENT || ''}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
+                if (!draft.env) {
+                  draft.env = {}
+                }
                 draft.env.AUDIO_SILENT = newVal
               })
               onChange(newState)
@@ -84,9 +90,12 @@ export function Tts(props: {
         </FormGroup>
         <FormGroup label={'AUDIO_BEEP'} inline>
           <InputGroup
-            value={config.env.AUDIO_BEEP || ''}
+            value={config.env?.AUDIO_BEEP || ''}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
+                if (!draft.env) {
+                  draft.env = {}
+                }
                 draft.env.AUDIO_BEEP = newVal
               })
               onChange(newState)
@@ -95,9 +104,12 @@ export function Tts(props: {
         </FormGroup>
         <FormGroup label={'AUDIO_ACTIVE'} inline>
           <InputGroup
-            value={config.env.AUDIO_ACTIVE || ''}
+            value={config.env?.AUDIO_ACTIVE || ''}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
+                if (!draft.env) {
+                  draft.env = {}
+                }
                 draft.env.AUDIO_ACTIVE = newVal
               })
               onChange(newState)
@@ -106,9 +118,12 @@ export function Tts(props: {
         </FormGroup>
         <FormGroup label={'AUDIO_ERROR'} inline>
           <InputGroup
-            value={config.env.AUDIO_ERROR || ''}
+            value={config.env?.AUDIO_ERROR || ''}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
+                if (!draft.env) {
+                  draft.env = {}
+                }
                 draft.env.AUDIO_ERROR = newVal
               })
               onChange(newState)

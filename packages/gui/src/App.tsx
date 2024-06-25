@@ -1,4 +1,10 @@
-import { Options, defaults, exportJSON, importJSON } from '@migptgui/options'
+import {
+  Options,
+  defaults,
+  exportJSON,
+  importJSON,
+  strip,
+} from '@migptgui/options'
 import {
   Alignment,
   AnchorButton,
@@ -97,6 +103,7 @@ export function App() {
             <Options
               config={config}
               onChange={(config) => {
+                console.log('config and stripped config', config, strip(config))
                 setConfig(config)
               }}
             />

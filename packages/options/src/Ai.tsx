@@ -9,7 +9,7 @@ type AiConfig = {
 }
 
 export function Ai(props: {
-  config: AiConfig
+  config: AiConfig | undefined
   onChange: (config: AiConfig) => void
 }) {
   const { config, onChange } = props
@@ -24,48 +24,64 @@ export function Ai(props: {
       <FormGroup label={'OPENAI_API_KEY'} inline>
         <InputGroup
           required
-          value={config.OPENAI_API_KEY || ''}
+          value={config?.OPENAI_API_KEY || ''}
           onValueChange={(newVal) => {
             const newState = produce(config, (draft) => {
-              draft.OPENAI_API_KEY = newVal
+              if (draft) {
+                draft.OPENAI_API_KEY = newVal
+              } else {
+                return { OPENAI_API_KEY: newVal }
+              }
             })
-            onChange(newState)
+            onChange(newState!)
           }}
         />
       </FormGroup>
       <FormGroup label={'OPENAI_MODEL'} inline>
         <InputGroup
           required
-          value={config.OPENAI_MODEL || ''}
+          value={config?.OPENAI_MODEL || ''}
           onValueChange={(newVal) => {
             const newState = produce(config, (draft) => {
-              draft.OPENAI_MODEL = newVal
+              if (draft) {
+                draft.OPENAI_MODEL = newVal
+              } else {
+                return { OPENAI_MODEL: newVal }
+              }
             })
-            onChange(newState)
+            onChange(newState!)
           }}
         />
       </FormGroup>
       <FormGroup label={'OPENAI_BASE_URL'} inline>
         <InputGroup
           required
-          value={config.OPENAI_BASE_URL || ''}
+          value={config?.OPENAI_BASE_URL || ''}
           onValueChange={(newVal) => {
             const newState = produce(config, (draft) => {
-              draft.OPENAI_BASE_URL = newVal
+              if (draft) {
+                draft.OPENAI_BASE_URL = newVal
+              } else {
+                return { OPENAI_BASE_URL: newVal }
+              }
             })
-            onChange(newState)
+            onChange(newState!)
           }}
           rightElement={<Button>/chat/completions</Button>}
         />
       </FormGroup>
       <FormGroup label={'AZURE_OPENAI_API_KEY'} inline>
         <InputGroup
-          value={config.AZURE_OPENAI_API_KEY || ''}
+          value={config?.AZURE_OPENAI_API_KEY || ''}
           onValueChange={(newVal) => {
             const newState = produce(config, (draft) => {
-              draft.AZURE_OPENAI_API_KEY = newVal
+              if (draft) {
+                draft.AZURE_OPENAI_API_KEY = newVal
+              } else {
+                return { AZURE_OPENAI_API_KEY: newVal }
+              }
             })
-            onChange(newState)
+            onChange(newState!)
           }}
         />
       </FormGroup>

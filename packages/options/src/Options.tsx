@@ -7,6 +7,7 @@ import { type WholeConfig } from './type'
 import { H3 } from '@blueprintjs/core'
 import { Ai } from './Ai'
 import { Tts } from './Tts'
+import _isEmpty from 'lodash/isEmpty.js'
 
 export function Options(props: {
   config: WholeConfig
@@ -50,7 +51,8 @@ export function Options(props: {
           config={config.env}
           onChange={(aiConfig) => {
             const newState = produce(config, (draft) => {
-              Object.assign(draft.env, aiConfig)
+              if (_isEmpty(aiConfig)) return
+              Object.assign(draft.env || (draft.env = {}), aiConfig)
             })
             onChange(newState)
           }}
@@ -65,7 +67,9 @@ export function Options(props: {
           }}
           onChange={(ttsConfig) => {
             const newState = produce(config, (draft) => {
-              Object.assign(draft.env, ttsConfig.env)
+              if (!_isEmpty(ttsConfig.env)) {
+                Object.assign(draft.env || (draft.env = {}), ttsConfig.env)
+              }
               Object.assign(draft.config.speaker, ttsConfig.speaker)
             })
             onChange(newState)
