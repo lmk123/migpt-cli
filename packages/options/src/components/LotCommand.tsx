@@ -23,6 +23,12 @@ export function LotCommand(props: {
         onValueChange={(newVal) => {
           const v = produce(value, (draft) => {
             draft[i] = newVal == null ? undefined : newVal
+            // 把数组里的空槽填充 undefined，免得被 array.filter 隐性过滤掉
+            for (let j = 0; j < draft.length; j++) {
+              if (draft[j] == null) {
+                draft[j] = undefined
+              }
+            }
           })
           onChange(v)
         }}
