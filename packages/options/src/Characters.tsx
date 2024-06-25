@@ -4,6 +4,8 @@ import {
   FormGroup,
   H5,
   InputGroup,
+  Radio,
+  RadioGroup,
   TextArea,
 } from '@blueprintjs/core'
 import { produce } from 'immer'
@@ -80,18 +82,88 @@ function roomFallback(master: string | undefined, bot: string | undefined) {
   return `${master || fallback.master.name}和${bot || fallback.bot.name}的私聊`
 }
 
+function checkSystemTemplate(template: string | undefined) {
+  if (template == null) {
+    return 'default'
+  }
+  return 'custom'
+}
+
 export function Characters(props: {
   config: ProfileConfig
   onChange: (pc: ProfileConfig) => void
 }) {
   const { config, onChange } = props
 
+  const promptType = checkSystemTemplate(config.systemTemplate)
+  const promptTypeIsCustom = config.systemTemplate != null
+  const promptTypeIsNone = config.systemTemplate === ''
+
   return (
     <div className={'tw-space-y-4'}>
       <Card>
+        <FormGroup label={'系统模板'} inline>
+          <RadioGroup
+            className={'tw-mb-0'}
+            inline
+            onChange={(event) => {
+              const type = event.currentTarget.value
+              const newState = produce(config, (draft) => {
+                if (type === 'default') {
+                  draft.systemTemplate = undefined
+                } else {
+                  draft.systemTemplate = ''
+                }
+              })
+              onChange(newState)
+            }}
+            selectedValue={promptType}
+          >
+            <Radio label="默认" value="default" />
+            <Radio label="自定义" value="custom" />
+            {promptTypeIsCustom && (
+              <Button
+                small
+                onClick={() => {
+                  const newState = produce(config, (draft) => {
+                    draft.systemTemplate = examplePrompt
+                  })
+                  onChange(newState)
+                }}
+                text={'写入默认模版'}
+              />
+            )}
+          </RadioGroup>
+        </FormGroup>
+
+        {promptTypeIsCustom && (
+          <TextArea
+            autoResize
+            placeholder={
+              '留空则不使用系统模版，这意味着你将不带人设 / 记忆信息，直接跟 AI 对话。'
+            }
+            fill
+            value={config.systemTemplate || ''}
+            onChange={(event) => {
+              const newVal = event.target.value
+              const newState = produce(config, (draft) => {
+                draft.systemTemplate = newVal
+              })
+              onChange(newState)
+            }}
+          />
+        )}
+      </Card>
+      <Card>
         <H5>机器人</H5>
-        <FormGroup label={'名称'} helperText={'对方名称（小爱音箱）'} inline>
+        <FormGroup
+          label={'名称'}
+          helperText={'对方名称（小爱音箱）'}
+          inline
+          disabled={promptTypeIsNone}
+        >
           <InputGroup
+            disabled={promptTypeIsNone}
             placeholder={fallback.bot.name}
             value={config.bot.name || ''}
             onValueChange={(newVal) => {
@@ -102,8 +174,14 @@ export function Characters(props: {
             }}
           />
         </FormGroup>
-        <FormGroup label={'人设'} helperText={'对方的个人简介 / 人设'} inline>
+        <FormGroup
+          label={'人设'}
+          helperText={'对方的个人简介 / 人设'}
+          inline
+          disabled={promptTypeIsNone}
+        >
           <TextArea
+            disabled={promptTypeIsNone}
             autoResize
             placeholder={fallback.bot.profile}
             value={config.bot.profile || ''}
@@ -119,8 +197,14 @@ export function Characters(props: {
       </Card>
       <Card>
         <H5>主人</H5>
-        <FormGroup label={'名称'} helperText={'主人名称（我自己）'} inline>
+        <FormGroup
+          label={'名称'}
+          helperText={'主人名称（我自己）'}
+          inline
+          disabled={promptTypeIsNone}
+        >
           <InputGroup
+            disabled={promptTypeIsNone}
             placeholder={fallback.master.name}
             value={config.master.name || ''}
             onValueChange={(newVal) => {
@@ -131,8 +215,14 @@ export function Characters(props: {
             }}
           />
         </FormGroup>
-        <FormGroup label={'人设'} helperText={'主人的个人简介 / 人设'} inline>
+        <FormGroup
+          label={'人设'}
+          helperText={'主人的个人简介 / 人设'}
+          inline
+          disabled={promptTypeIsNone}
+        >
           <TextArea
+            disabled={promptTypeIsNone}
             placeholder={fallback.master.profile}
             autoResize
             value={config.master.profile || ''}
@@ -148,8 +238,14 @@ export function Characters(props: {
       </Card>
       <Card>
         <H5>会话群</H5>
-        <FormGroup label={'名称'} helperText={'会话群名称'} inline>
+        <FormGroup
+          label={'名称'}
+          helperText={'会话群名称'}
+          inline
+          disabled={promptTypeIsNone}
+        >
           <InputGroup
+            disabled={promptTypeIsNone}
             placeholder={roomFallback(config.master.name, config.bot.name)}
             value={config.room.name || ''}
             onValueChange={(newVal) => {
@@ -160,42 +256,20 @@ export function Characters(props: {
             }}
           />
         </FormGroup>
-        <FormGroup label={'简介'} helperText={'会话群简介'} inline>
+        <FormGroup
+          label={'简介'}
+          helperText={'会话群简介'}
+          inline
+          disabled={promptTypeIsNone}
+        >
           <TextArea
+            disabled={promptTypeIsNone}
             autoResize
             value={config.room.description || ''}
             onChange={(event) => {
               const newVal = event.target.value
               const newState = produce(config, (draft) => {
                 draft.room.description = newVal
-              })
-              onChange(newState)
-            }}
-          />
-        </FormGroup>
-      </Card>
-      <Card>
-        <H5>
-          自定义 prompt 模版{' '}
-          <Button
-            onClick={() => {
-              const newState = produce(config, (draft) => {
-                draft.systemTemplate = examplePrompt
-              })
-              onChange(newState)
-            }}
-            text={'写入默认模版'}
-          />
-        </H5>
-        <FormGroup>
-          <TextArea
-            autoResize
-            fill
-            value={config.systemTemplate || ''}
-            onChange={(event) => {
-              const newVal = event.target.value
-              const newState = produce(config, (draft) => {
-                draft.systemTemplate = newVal
               })
               onChange(newState)
             }}

@@ -8,28 +8,11 @@ import { H3 } from '@blueprintjs/core'
 import { Ai } from './Ai'
 import { Tts } from './Tts'
 
-function normalizeConfig(config: WholeConfig) {
-  // 这里还是要用 immer，否则会报错
-  return produce(config, (draft) => {
-    // 传空字符串会导致系统模版被清空。
-    // 未来应该在界面上给个选项，允许用户选择不使用系统模版。
-    if (draft.config.systemTemplate === '') {
-      delete draft.config.systemTemplate
-    }
-  })
-}
-
 export function Options(props: {
   config: WholeConfig
   onChange: (config: WholeConfig) => void
 }) {
-  const { config, onChange: o } = props
-
-  const onChange = (config: WholeConfig) => {
-    const n = normalizeConfig(config)
-    // console.log(n)
-    o(n)
-  }
+  const { config, onChange } = props
 
   return (
     <div className={'tw-space-y-6'}>
@@ -45,7 +28,6 @@ export function Options(props: {
               _set(result, 'config', mc)
               return result
             })!
-            console.log('newState', newState)
             onChange(newState)
           }}
         />

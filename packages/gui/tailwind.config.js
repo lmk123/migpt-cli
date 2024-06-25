@@ -10,6 +10,7 @@ module.exports = {
       '**/*.{ts,tsx,html,js}',
     ),
   ],
+  important: true,
   theme: {
     extend: {},
   },
