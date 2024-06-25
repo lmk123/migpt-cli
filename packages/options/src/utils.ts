@@ -91,6 +91,13 @@ export function strip(config: WholeConfig) {
             // if (obj[key].length < l) {
             //   console.log('删除 ' + key + ' 数组中的空字符串')
             // }
+            // 删除数组末尾的 undefined
+            while (
+              obj[key].length > 0 &&
+              obj[key][obj[key].length - 1] === undefined
+            ) {
+              obj[key].pop()
+            }
           } else {
             clean(obj[key])
           }

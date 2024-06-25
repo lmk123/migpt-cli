@@ -1,4 +1,3 @@
-import { InputGroup } from '@blueprintjs/core'
 import { produce } from 'immer'
 import { NumberText } from './NumberText'
 
