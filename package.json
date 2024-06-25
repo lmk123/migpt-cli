@@ -5,7 +5,7 @@
     "clean-all": "npx nx run-many --target=clean",
     "build-all": "npx nx run-many --target=build",
     "u": "npx -y npm-check-updates -ws --root -u -x eslint,open",
-    "build:docker-server": "docker build -t lmk123/migpt-server -f docker/Dockerfile .",
+    "build:docker-server": "docker build -t lmk123/migpt-server --platform=linux/arm64,linux/amd64 ./docker",
     "pub-cli": "npx nx run migpt-cli:build --verbose && npm publish --access public -w apps/cli",
     "pub-server": "npx nx run migpt-server:build --verbose && npm publish --access public -w apps/server",
     "pub-options": "npx nx run @migptgui/options:build --verbose && npm publish --access public -w packages/options",
