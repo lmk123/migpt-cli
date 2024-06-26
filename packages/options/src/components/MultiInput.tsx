@@ -3,9 +3,10 @@ import { Button, Classes, InputGroup, UL } from '@blueprintjs/core'
 export function MultiInput(props: {
   value?: string[]
   required?: boolean
+  disabled?: boolean
   onChange: (value: string[]) => void
 }) {
-  const { required, value = [], onChange } = props
+  const { required, value = [], onChange, disabled } = props
   const count = value.length || 1
   const CommandList = []
 
@@ -14,6 +15,7 @@ export function MultiInput(props: {
     CommandList.push(
       <li key={'text-' + i}>
         <InputGroup
+          disabled={disabled}
           className={'tw-inline-block'}
           value={s}
           required={required}
@@ -24,7 +26,7 @@ export function MultiInput(props: {
           }}
         />
         <Button
-          disabled={count <= 1}
+          disabled={disabled || count <= 1}
           icon={'delete'}
           className={'tw-ml-1'}
           onClick={() => {
@@ -46,6 +48,7 @@ export function MultiInput(props: {
         <li>
           <Button
             icon={'add'}
+            disabled={disabled}
             onClick={() => {
               onChange([...value, ''])
             }}

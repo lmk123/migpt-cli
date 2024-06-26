@@ -231,7 +231,7 @@ export function Speaker(props: {
       <Card>
         <H5>连续对话（唤醒模式）</H5>
         <FormGroup
-          label={'连续对话'}
+          label={'是否启用'}
           helperText={
             isSpeakerSelected ? (
               <>
@@ -279,8 +279,10 @@ export function Speaker(props: {
             '当消息以关键词开头时，会进入 AI 唤醒状态。AI 唤醒状态下，可以跟 AI 连续对话。'
           }
           inline
+          disabled={noSupportStream}
         >
           <MultiInput
+            disabled={noSupportStream}
             value={config.wakeUpKeywords}
             onChange={(value) => {
               const newState = produce(config, (draft) => {
@@ -295,8 +297,10 @@ export function Speaker(props: {
           label={'退出关键词'}
           helperText={'当消息以关键词开头时，会退出 AI 唤醒状态。'}
           inline
+          disabled={noSupportStream}
         >
           <MultiInput
+            disabled={noSupportStream}
             value={config.exitKeywords}
             onChange={(value) => {
               const newState = produce(config, (draft) => {
@@ -310,8 +314,10 @@ export function Speaker(props: {
           label={'自动退出时间'}
           helperText={'连续对话时，无响应多久后自动退出。单位：秒。'}
           inline
+          disabled={noSupportStream}
         >
           <NumberText
+            disabled={noSupportStream}
             placeholder={'30'}
             value={
               config.exitKeepAliveAfter == null
@@ -329,6 +335,7 @@ export function Speaker(props: {
           />
         </FormGroup>
         <FormGroup
+          disabled={noSupportStream}
           label={'检测 1'}
           helperText={
             '连续对话时，播放状态检测间隔（单位：毫秒）。调小此值可以降低小爱回复之间的停顿感，请酌情调节'
@@ -336,6 +343,7 @@ export function Speaker(props: {
           inline
         >
           <NumberText
+            disabled={noSupportStream}
             placeholder={'1000'}
             value={config.checkInterval == null ? null : config.checkInterval}
             min={500}
@@ -349,6 +357,7 @@ export function Speaker(props: {
           />
         </FormGroup>
         <FormGroup
+          disabled={noSupportStream}
           label={'检测 2'}
           helperText={
             '连续对话时，下发 TTS 指令多长时间后开始检测设备播放状态（单位：秒）。最好不要低于 1 秒。）'
@@ -356,6 +365,7 @@ export function Speaker(props: {
           inline
         >
           <NumberText
+            disabled={noSupportStream}
             placeholder={'3'}
             value={
               config.checkTTSStatusAfter == null
