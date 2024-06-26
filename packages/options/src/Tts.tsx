@@ -1,4 +1,11 @@
-import { Card, FormGroup, H5, InputGroup } from '@blueprintjs/core'
+import {
+  Card,
+  FormGroup,
+  H5,
+  InputGroup,
+  Radio,
+  RadioGroup,
+} from '@blueprintjs/core'
 import { produce } from 'immer'
 import { MultiInput } from './components/MultiInput'
 
@@ -25,57 +32,61 @@ export function Tts(props: {
   return (
     <div className={'tw-space-y-4'}>
       <Card>
-        <H5>
-          自定义 TTS 引擎{' '}
-          <a href="https://migptgui.com/docs/faqs/tts" target={'_blank'}>
-            查看说明
-          </a>
-        </H5>
         <FormGroup label={'TTS 引擎'} inline>
-          <InputGroup
-            placeholder={'xiaoai'}
-            value={config.speaker.tts || ''}
-            onValueChange={(newVal) => {
+          <RadioGroup
+            className={'tw-mb-0'}
+            inline
+            selectedValue={config.speaker.tts || 'xiaoai'}
+            onChange={(event) => {
+              const value = event.currentTarget.value
               const newState = produce(config, (draft) => {
-                draft.speaker.tts = newVal
-              })
-
-              onChange(newState)
-            }}
-          />
-        </FormGroup>
-
-        <FormGroup label={'TTS_BASE_URL'} inline>
-          <InputGroup
-            value={config.env?.TTS_BASE_URL || ''}
-            onValueChange={(newVal) => {
-              const newState = produce(config, (draft) => {
-                if (!draft.env) {
-                  draft.env = {}
-                }
-                draft.env.TTS_BASE_URL = newVal
+                draft.speaker.tts = value === 'xiaoai' ? undefined : value
               })
               onChange(newState)
             }}
-          />
+          >
+            <Radio label="默认" value={'xiaoai'} />
+            <Radio label="自定义" value={'custom'} />
+            {config.speaker.tts === 'custom' && (
+              <a href="https://migptgui.com/docs/faqs/tts" target={'_blank'}>
+                查看说明
+              </a>
+            )}
+          </RadioGroup>
         </FormGroup>
 
-        <FormGroup
-          label={'切换音色关键词'}
-          helperText={'只有配置了第三方 TTS 引擎时才有效'}
-          inline
-        >
-          <MultiInput
-            value={config.speaker.switchSpeakerKeywords}
-            onChange={(value) => {
-              const newState = produce(config, (draft) => {
-                draft.speaker.switchSpeakerKeywords = value
-              })
+        {config.speaker.tts === 'custom' && (
+          <>
+            <FormGroup label={'TTS_BASE_URL'} inline>
+              <InputGroup
+                required
+                value={config.env?.TTS_BASE_URL || ''}
+                onValueChange={(newVal) => {
+                  const newState = produce(config, (draft) => {
+                    if (!draft.env) {
+                      draft.env = {}
+                    }
+                    draft.env.TTS_BASE_URL = newVal
+                  })
+                  onChange(newState)
+                }}
+              />
+            </FormGroup>
 
-              onChange(newState)
-            }}
-          />
-        </FormGroup>
+            <FormGroup label={'切换音色关键词'} inline>
+              <MultiInput
+                value={config.speaker.switchSpeakerKeywords}
+                onChange={(value) => {
+                  const newState = produce(config, (draft) => {
+                    draft.speaker.switchSpeakerKeywords = value
+                  })
+
+                  onChange(newState)
+                }}
+              />
+            </FormGroup>
+          </>
+        )}
       </Card>
       <Card>
         <H5>提示音</H5>
