@@ -25,7 +25,12 @@ export function Tts(props: {
   return (
     <div className={'tw-space-y-4'}>
       <Card>
-        <H5>自定义 TTS 引擎</H5>
+        <H5>
+          自定义 TTS 引擎{' '}
+          <a href="https://migptgui.com/docs/faqs/tts" target={'_blank'}>
+            查看说明
+          </a>
+        </H5>
         <FormGroup label={'TTS 引擎'} inline>
           <InputGroup
             placeholder={'xiaoai'}
