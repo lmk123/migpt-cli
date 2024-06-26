@@ -4,10 +4,11 @@ import { NumberText } from './NumberText'
 export function LotCommand(props: {
   value?: (number | undefined)[]
   required?: boolean
+  disabled?: boolean
   count: number
   onChange: (value: (number | undefined)[]) => void
 }) {
-  const { required, value = [], count, onChange } = props
+  const { required, disabled, value = [], count, onChange } = props
 
   const CommandList = []
 
@@ -15,6 +16,7 @@ export function LotCommand(props: {
     const n = value[i]
     CommandList.push(
       <NumberText
+        disabled={disabled}
         key={'command-' + i}
         className={'tw-inline-block tw-w-[30px] tw-min-w-0'}
         value={n == null ? null : n}

@@ -4,6 +4,8 @@ import { LotCommand } from './components/LotCommand'
 import { MultiInput } from './components/MultiInput'
 import { NumberText } from './components/NumberText'
 import { type SpeakerConfig } from './type'
+import { ChooseSpeaker, speakers } from './components/ChooseSpeaker'
+import { useState } from 'react'
 
 export function Speaker(props: {
   config: SpeakerConfig
@@ -11,8 +13,79 @@ export function Speaker(props: {
 }) {
   const { config, onChange } = props
 
+  const [speaker, setSpeaker] = useState<string | null>(null)
+
+  const isSpeakerSelected = !!speaker
+  const isSpeakerSupport = isSpeakerSelected
+    ? !!speakers.find((s) => s.name === speaker)?.options
+    : true
+  const noSupportStream = config.streamResponse === false
+
   return (
     <div className={'tw-space-y-4'}>
+      <FormGroup
+        label={'选择你的音箱型号'}
+        inline
+        helperText={
+          isSpeakerSupport ? (
+            <>
+              根据你选择的型号，将会为你自动填写音箱的部分配置。
+              <a
+                href="https://migptgui.com/docs/faqs/supports"
+                target={'_blank'}
+              >
+                查看说明
+              </a>
+            </>
+          ) : (
+            <>
+              此型号不支持使用 MiGPT GUI。
+              <a
+                href="https://migptgui.com/docs/faqs/supports"
+                target={'_blank'}
+              >
+                查看说明
+              </a>
+            </>
+          )
+        }
+      >
+        <ChooseSpeaker
+          value={speaker}
+          onChange={(speakerName) => {
+            setSpeaker(speakerName)
+            const newState = produce(config, (draft) => {
+              // 不选择，代表用户自己填写
+              if (!speakerName) {
+                Object.assign(draft, {
+                  ttsCommand: undefined,
+                  wakeUpCommand: undefined,
+                  playingCommand: undefined,
+                  streamResponse: undefined,
+                })
+                return
+              }
+
+              const speakerConfig = speakers.find((s) => s.name === speakerName)
+              if (speakerConfig) {
+                Object.assign(
+                  draft,
+                  speakerConfig.options || {
+                    // 没有 options，表示用户选择的型号不支持 MiGPT GUI
+                    ttsCommand: undefined,
+                    wakeUpCommand: undefined,
+                    playingCommand: undefined,
+                    streamResponse: false,
+                  },
+                )
+              } else {
+                alert('如果运行到这里，代码肯定出了问题：型号错误')
+              }
+            })
+            onChange(newState)
+          }}
+        />
+      </FormGroup>
       <Card>
         <H5>控制</H5>
         <FormGroup
@@ -72,8 +145,13 @@ export function Speaker(props: {
             }}
           />
         </FormGroup>
-        <FormGroup label={'TTS 命令'} inline>
+        <FormGroup
+          label={'TTS 命令'}
+          inline
+          helperText={isSpeakerSelected ? '已根据你选择的型号自动填写。' : ''}
+        >
           <LotCommand
+            disabled={isSpeakerSelected}
             required
             value={config.ttsCommand}
             count={2}
@@ -85,8 +163,13 @@ export function Speaker(props: {
             }}
           />
         </FormGroup>
-        <FormGroup label={'唤醒命令'} inline>
+        <FormGroup
+          label={'唤醒命令'}
+          inline
+          helperText={isSpeakerSelected ? '已根据你选择的型号自动填写。' : ''}
+        >
           <LotCommand
+            disabled={isSpeakerSelected}
             required
             value={config.wakeUpCommand}
             count={2}
@@ -98,8 +181,13 @@ export function Speaker(props: {
             }}
           />
         </FormGroup>
-        <FormGroup label={'播放命令'} inline>
+        <FormGroup
+          label={'播放命令'}
+          inline
+          helperText={isSpeakerSelected ? '已根据你选择的型号自动填写。' : ''}
+        >
           <LotCommand
+            disabled={isSpeakerSelected}
             value={config.playingCommand}
             count={3}
             onChange={(value) => {
@@ -145,11 +233,33 @@ export function Speaker(props: {
         <FormGroup
           label={'连续对话'}
           helperText={
-            '部分小爱音箱型号无法查询到正确的播放状态，需要关闭连续对话。'
+            isSpeakerSelected ? (
+              <>
+                已根据你选择的型号自动填写。你选择的型号
+                {noSupportStream ? '不' : ''}支持连续对话，
+                <a
+                  href="https://migptgui.com/docs/faqs/supports"
+                  target={'_blank'}
+                >
+                  查看说明
+                </a>
+              </>
+            ) : (
+              <>
+                部分小爱音箱型号不支持连续对话，
+                <a
+                  href="https://migptgui.com/docs/faqs/supports"
+                  target={'_blank'}
+                >
+                  查看说明
+                </a>
+              </>
+            )
           }
           inline
         >
           <Checkbox
+            disabled={isSpeakerSelected}
             checked={
               config.streamResponse == null ? true : config.streamResponse
             }
