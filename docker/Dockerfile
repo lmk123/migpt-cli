@@ -1,7 +1,6 @@
 FROM node:20.15.0-alpine3.20 AS env-amd64
 FROM node:20.15.0-alpine3.20 AS env-arm64
 
-
 ###### 尝试构建 armv7l 时失败，但还是把过程放在这里 ######
 # arm32v7/node:20.15.0-alpine3.20 获取不到 metadata 报错
 # arm32v7/node:20.15.0 虽然在 docker hub 的描述里是有这个 tag 的，但是实际 build 镜像时会报错 docker.io/arm32v7/node:20.15.0: not found
@@ -27,7 +26,7 @@ FROM node:20.15.0-alpine3.20 AS env-arm64
 ###### 尝试构建 armv7l 的过程 ######
 
 FROM env-$TARGETARCH
-RUN npm install -g migpt-server
+RUN npm install -g migpt-server@1.1.0
 EXPOSE 36592
 ENTRYPOINT ["migpt-server"]
 
