@@ -162,9 +162,7 @@ export function Characters(props: {
               textareaEleRef.current = ele
             }}
             autoResize
-            placeholder={
-              '留空则不使用系统模版，这意味着你将不带人设 / 记忆信息，直接跟 AI 对话。'
-            }
+            placeholder={'留空则表示关闭系统模版'}
             fill
             value={config.systemTemplate || ''}
             onChange={(event) => {
