@@ -133,16 +133,25 @@ export function Characters(props: {
             <Radio label="默认" value="default" />
             <Radio label="自定义" value="custom" />
             {promptTypeIsCustom && (
-              <Button
-                small
-                onClick={() => {
-                  const newState = produce(config, (draft) => {
-                    draft.systemTemplate = examplePrompt
-                  })
-                  onChange(newState)
-                }}
-                text={'写入默认模版'}
-              />
+              <>
+                <Button
+                  small
+                  className={'tw-mr-2'}
+                  onClick={() => {
+                    const newState = produce(config, (draft) => {
+                      draft.systemTemplate = examplePrompt
+                    })
+                    onChange(newState)
+                  }}
+                  text={'写入默认模版'}
+                />
+                <a
+                  href="https://migptgui.com/docs/faqs/template"
+                  target={'_blank'}
+                >
+                  查看说明
+                </a>
+              </>
             )}
           </RadioGroup>
         </FormGroup>
