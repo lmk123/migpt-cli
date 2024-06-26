@@ -56,6 +56,7 @@ export function Ai(props: {
       <FormGroup label={'OPENAI_BASE_URL'} inline>
         <InputGroup
           required
+          type={'url'}
           value={config?.OPENAI_BASE_URL || ''}
           onValueChange={(newVal) => {
             const newState = produce(config, (draft) => {

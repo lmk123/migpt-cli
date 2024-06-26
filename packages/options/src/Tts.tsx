@@ -60,6 +60,7 @@ export function Tts(props: {
             <FormGroup label={'TTS_BASE_URL'} inline>
               <InputGroup
                 required
+                type={'url'}
                 value={config.env?.TTS_BASE_URL || ''}
                 onValueChange={(newVal) => {
                   const newState = produce(config, (draft) => {
