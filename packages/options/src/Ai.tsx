@@ -79,6 +79,7 @@ export function Ai(props: {
       </FormGroup>
       <FormGroup label={'Azure 密钥'} inline>
         <InputGroup
+          placeholder={'不使用 Azure OpenAI 服务请留空'}
           value={config?.AZURE_OPENAI_API_KEY || ''}
           onValueChange={(newVal) => {
             const newState = produce(config, (draft) => {
