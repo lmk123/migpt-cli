@@ -1,4 +1,11 @@
-import { Card, Checkbox, FormGroup, H5, InputGroup } from '@blueprintjs/core'
+import {
+  Card,
+  Checkbox,
+  Classes,
+  FormGroup,
+  H5,
+  InputGroup,
+} from '@blueprintjs/core'
 import { produce } from 'immer'
 import { LotCommand } from './components/LotCommand'
 import { MultiInput } from './components/MultiInput'
@@ -202,19 +209,13 @@ export function Speaker(props: {
 
       <Card>
         <H5>单次对话</H5>
-        <FormGroup
-          label={'调用 AI 关键词'}
-          helperText={
-            <>
-              <p>当消息以关键词开头时，会调用 AI 来响应用户消息。</p>
-              <div>
-                举个例子：当你对小爱说“请告诉我……”或者“傻妞，你觉得……”时，由于这两条消息都是以“请”或者“傻妞”开头，所以会调用
-                AI 来回答。
-              </div>
-            </>
-          }
-          inline
-        >
+        <p className={Classes.TEXT_MUTED + ' ' + Classes.TEXT_SMALL}>
+          “单次对话”的说明见：
+          <a href="https://migptgui.com/docs/faqs/wakeup" target={'_blank'}>
+            如何调用 AI 进行回答？
+          </a>
+        </p>
+        <FormGroup label={'调用 AI 关键词'} inline>
           <MultiInput
             value={config.callAIKeywords}
             onChange={(value) => {
@@ -230,31 +231,16 @@ export function Speaker(props: {
 
       <Card>
         <H5>连续对话（唤醒模式）</H5>
+        <p className={Classes.TEXT_MUTED + ' ' + Classes.TEXT_SMALL}>
+          “连续对话”的说明见：
+          <a href="https://migptgui.com/docs/faqs/wakeup" target={'_blank'}>
+            如何调用 AI 进行回答？
+          </a>
+        </p>
         <FormGroup
           label={'是否启用'}
           helperText={
-            isSpeakerSelected ? (
-              <>
-                已根据你选择的型号自动填写。你选择的型号
-                {noSupportStream ? '不' : ''}支持连续对话，
-                <a
-                  href="https://migptgui.com/docs/faqs/supports"
-                  target={'_blank'}
-                >
-                  查看说明
-                </a>
-              </>
-            ) : (
-              <>
-                部分小爱音箱型号不支持连续对话，
-                <a
-                  href="https://migptgui.com/docs/faqs/supports"
-                  target={'_blank'}
-                >
-                  查看说明
-                </a>
-              </>
-            )
+            isSpeakerSelected ? '已根据你选择的型号自动填写。' : undefined
           }
           inline
         >
