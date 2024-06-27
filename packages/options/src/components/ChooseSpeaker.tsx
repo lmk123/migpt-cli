@@ -171,7 +171,7 @@ export function ChooseSpeaker(props: {
         props.onChange(e.target.value || null)
       }}
     >
-      <option value="">请选择……</option>
+      <option value="">自定义</option>
       <optgroup label={'支持连续对话'}>
         {speakersPerfect.map((speaker) => (
           <option key={speaker.name} value={speaker.name}>
