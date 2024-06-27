@@ -1,4 +1,4 @@
-import { Button, Card, FormGroup, InputGroup } from '@blueprintjs/core'
+import { Card, FormGroup, InputGroup } from '@blueprintjs/core'
 import { produce } from 'immer'
 
 type AiConfig = {
@@ -21,7 +21,31 @@ export function Ai(props: {
           点击查看 AI 服务申请教程
         </a>
       </p>
-      <FormGroup label={'OPENAI_API_KEY'} inline>
+      <FormGroup label={'接口地址'} inline>
+        <InputGroup
+          required
+          type={'url'}
+          value={config?.OPENAI_BASE_URL || ''}
+          onValueChange={(newVal) => {
+            const newState = produce(config, (draft) => {
+              if (draft) {
+                draft.OPENAI_BASE_URL = newVal
+              } else {
+                return { OPENAI_BASE_URL: newVal }
+              }
+            })
+            onChange(newState!)
+          }}
+          rightElement={
+            <span
+              className={`tw-inline-block tw-h-[28px] tw-leading-[28px] tw-pr-2`}
+            >
+              /chat/completions
+            </span>
+          }
+        />
+      </FormGroup>
+      <FormGroup label={'密钥'} inline>
         <InputGroup
           required
           value={config?.OPENAI_API_KEY || ''}
@@ -37,7 +61,7 @@ export function Ai(props: {
           }}
         />
       </FormGroup>
-      <FormGroup label={'OPENAI_MODEL'} inline>
+      <FormGroup label={'模型'} inline>
         <InputGroup
           required
           value={config?.OPENAI_MODEL || ''}
@@ -53,25 +77,7 @@ export function Ai(props: {
           }}
         />
       </FormGroup>
-      <FormGroup label={'OPENAI_BASE_URL'} inline>
-        <InputGroup
-          required
-          type={'url'}
-          value={config?.OPENAI_BASE_URL || ''}
-          onValueChange={(newVal) => {
-            const newState = produce(config, (draft) => {
-              if (draft) {
-                draft.OPENAI_BASE_URL = newVal
-              } else {
-                return { OPENAI_BASE_URL: newVal }
-              }
-            })
-            onChange(newState!)
-          }}
-          rightElement={<Button>/chat/completions</Button>}
-        />
-      </FormGroup>
-      <FormGroup label={'AZURE_OPENAI_API_KEY'} inline>
+      <FormGroup label={'Azure 密钥'} inline>
         <InputGroup
           value={config?.AZURE_OPENAI_API_KEY || ''}
           onValueChange={(newVal) => {
