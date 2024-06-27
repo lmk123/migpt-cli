@@ -26,7 +26,7 @@ FROM node:20.15.0-alpine3.20 AS env-arm64
 ###### 尝试构建 armv7l 的过程 ######
 
 FROM env-$TARGETARCH
-RUN npm install -g migpt-server@1.1.0
+RUN npm install -g migpt-server@1.2.0
 EXPOSE 36592
 ENTRYPOINT ["migpt-server"]
 
