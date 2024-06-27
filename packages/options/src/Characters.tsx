@@ -177,12 +177,7 @@ export function Characters(props: {
       </Card>
       <Card>
         <H5>机器人</H5>
-        <FormGroup
-          label={'名称'}
-          helperText={'对方名称（小爱音箱）'}
-          inline
-          disabled={promptTypeIsNone}
-        >
+        <FormGroup label={'名称'} inline disabled={promptTypeIsNone}>
           <InputGroup
             disabled={promptTypeIsNone}
             placeholder={fallback.bot?.name}
@@ -195,12 +190,7 @@ export function Characters(props: {
             }}
           />
         </FormGroup>
-        <FormGroup
-          label={'人设'}
-          helperText={'对方的个人简介 / 人设'}
-          inline
-          disabled={promptTypeIsNone}
-        >
+        <FormGroup label={'人设'} inline disabled={promptTypeIsNone}>
           <TextArea
             disabled={promptTypeIsNone}
             autoResize
@@ -218,12 +208,7 @@ export function Characters(props: {
       </Card>
       <Card>
         <H5>主人</H5>
-        <FormGroup
-          label={'名称'}
-          helperText={'主人名称（我自己）'}
-          inline
-          disabled={promptTypeIsNone}
-        >
+        <FormGroup label={'名称'} inline disabled={promptTypeIsNone}>
           <InputGroup
             disabled={promptTypeIsNone}
             placeholder={fallback.master?.name}
@@ -237,12 +222,7 @@ export function Characters(props: {
             }}
           />
         </FormGroup>
-        <FormGroup
-          label={'人设'}
-          helperText={'主人的个人简介 / 人设'}
-          inline
-          disabled={promptTypeIsNone}
-        >
+        <FormGroup label={'人设'} inline disabled={promptTypeIsNone}>
           <TextArea
             disabled={promptTypeIsNone}
             placeholder={fallback.master?.profile}
@@ -261,12 +241,7 @@ export function Characters(props: {
       </Card>
       <Card>
         <H5>会话群</H5>
-        <FormGroup
-          label={'名称'}
-          helperText={'会话群名称'}
-          inline
-          disabled={promptTypeIsNone}
-        >
+        <FormGroup label={'名称'} inline disabled={promptTypeIsNone}>
           <InputGroup
             disabled={promptTypeIsNone}
             placeholder={roomFallback(config.master?.name, config.bot?.name)}
@@ -279,13 +254,9 @@ export function Characters(props: {
             }}
           />
         </FormGroup>
-        <FormGroup
-          label={'简介'}
-          helperText={'会话群简介'}
-          inline
-          disabled={promptTypeIsNone}
-        >
+        <FormGroup label={'简介'} inline disabled={promptTypeIsNone}>
           <TextArea
+            placeholder={roomFallback(config.master?.name, config.bot?.name)}
             disabled={promptTypeIsNone}
             autoResize
             value={config.room?.description || ''}
