@@ -69,7 +69,6 @@ export function Ai(props: {
       <FormGroup label={'接口地址'} inline>
         <InputGroup
           required
-          disabled={selectedAI != null}
           type={'url'}
           value={config?.OPENAI_BASE_URL || ''}
           onValueChange={(newVal) => {
