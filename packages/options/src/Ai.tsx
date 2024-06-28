@@ -130,6 +130,7 @@ export function Ai(props: {
                   {selectedAI.models.map((model, i) => (
                     <>
                       <a
+                        key={model}
                         onClick={() => {
                           const newState = produce(config, (draft) => {
                             if (draft) {
