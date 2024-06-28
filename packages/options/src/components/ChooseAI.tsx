@@ -28,7 +28,7 @@ export const ais: AIInfo[] = [
   {
     name: '通义千问',
     urlDocs: 'https://migptgui.com/docs/apply/tongyi',
-    urlAPI: 'https://open.bigmodel.cn/api/paas/v4',
+    urlAPI: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
     models: ['qwen-long', 'qwen-turbo', 'qwen-plus'],
   },
   {
