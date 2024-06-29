@@ -298,7 +298,7 @@ export function Speaker(props: {
         </FormGroup>
         <FormGroup
           label={'自动退出时间'}
-          helperText={'连续对话时，无响应多久后自动退出。单位：秒。'}
+          helperText={'连续对话时，无响应多久后自动退出。'}
           inline
           disabled={noSupportStream}
         >
@@ -318,13 +318,18 @@ export function Speaker(props: {
               })
               onChange(newState)
             }}
+            rightElement={
+              <span className="tw-inline-block tw-h-[28px] tw-leading-[28px] tw-pr-2">
+                秒
+              </span>
+            }
           />
         </FormGroup>
         <FormGroup
           disabled={noSupportStream}
           label={'检测 1'}
           helperText={
-            '连续对话时，播放状态检测间隔（单位：毫秒）。调小此值可以降低小爱回复之间的停顿感，请酌情调节'
+            '连续对话时，播放状态检测间隔。调小此值可以降低小爱回复之间的停顿感，请酌情调节'
           }
           inline
         >
@@ -340,13 +345,18 @@ export function Speaker(props: {
               })
               onChange(newState)
             }}
+            rightElement={
+              <span className="tw-inline-block tw-h-[28px] tw-leading-[28px] tw-pr-2">
+                毫秒
+              </span>
+            }
           />
         </FormGroup>
         <FormGroup
           disabled={noSupportStream}
           label={'检测 2'}
           helperText={
-            '连续对话时，下发 TTS 指令多长时间后开始检测设备播放状态（单位：秒）。最好不要低于 1 秒。）'
+            '连续对话时，下发 TTS 指令多长时间后开始检测设备播放状态。最好不要低于 1 秒。）'
           }
           inline
         >
@@ -367,6 +377,11 @@ export function Speaker(props: {
 
               onChange(newState)
             }}
+            rightElement={
+              <span className="tw-inline-block tw-h-[28px] tw-leading-[28px] tw-pr-2">
+                秒
+              </span>
+            }
           />
         </FormGroup>
       </Card>
