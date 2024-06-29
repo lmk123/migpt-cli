@@ -1,4 +1,4 @@
-import { MiGPTConfig } from 'mi-gpt'
+import { type MiGPTConfig } from 'mi-gpt'
 
 export type SpeakerConfig = Omit<
   Partial<MiGPTConfig['speaker']>,

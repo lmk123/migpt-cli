@@ -8,6 +8,7 @@ import { H3 } from '@blueprintjs/core'
 import { Ai } from './Ai'
 import { Tts } from './Tts'
 import _isEmpty from 'lodash/isEmpty.js'
+import { Dev } from './Dev'
 
 export function Options(props: {
   config: WholeConfig
@@ -71,6 +72,18 @@ export function Options(props: {
                 Object.assign(draft.env || (draft.env = {}), ttsConfig.env)
               }
               Object.assign(draft.config.speaker, ttsConfig.speaker)
+            })
+            onChange(newState)
+          }}
+        />
+      </div>
+      <div>
+        <H3>开发人员选项</H3>
+        <Dev
+          config={config.config.speaker}
+          onChange={(newConfig) => {
+            const newState = produce(config, (draft) => {
+              Object.assign(draft.config.speaker, newConfig)
             })
             onChange(newState)
           }}
