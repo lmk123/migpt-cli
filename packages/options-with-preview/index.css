@@ -1,0 +1,44 @@
+.gui-web-form {
+  margin-right: 520px;
+}
+
+.gui-web-preview {
+  position: fixed;
+  z-index: 1;
+  top: 113px;
+  right: 20px;
+  width: 500px;
+  bottom: 167px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.gui-web-preview-head {
+  margin-bottom: 20px;
+
+  flex-grow: 0;
+  flex-shrink: 0;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gui-web-preview-head .bp5-button {
+  margin-left: 5px;
+}
+
+.gui-web-preview-head textarea {
+  flex-grow: 1;
+  overflow: auto;
+}
+
+.gui-web-form .bp5-label {
+  width: 160px;
+}
+
+.gui-web-main .bp5-input-group:not(.tw-min-w-0),
+.gui-web-main textarea {
+  min-width: 500px;
+}
