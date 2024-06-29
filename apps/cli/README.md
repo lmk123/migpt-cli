@@ -1,1 +1,1 @@
-详细说明见文档：https://github.com/lmk123/migpt-cli
+说明见：https://migptgui.com/docs/intro/cli
