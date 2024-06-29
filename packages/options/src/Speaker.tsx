@@ -153,7 +153,7 @@ export function Speaker(props: {
           />
         </FormGroup>
         <FormGroup
-          label={'TTS 命令'}
+          label={'播放命令'}
           inline
           helperText={isSpeakerSelected ? '已根据你选择的型号自动填写。' : ''}
         >
@@ -189,7 +189,7 @@ export function Speaker(props: {
           />
         </FormGroup>
         <FormGroup
-          label={'播放命令'}
+          label={'播放检测命令'}
           inline
           helperText={isSpeakerSelected ? '已根据你选择的型号自动填写。' : ''}
         >
