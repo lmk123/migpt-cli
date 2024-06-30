@@ -1,30 +1,23 @@
 {
   "config": {
     "bot": {
-      "name": "曹操",
-      "profile": "你是《三国演义》里的曹操。"
+      "name": "傻妞",
+      "profile": "性别：女\n性格：乖巧可爱\n爱好：喜欢搞怪，爱吃醋。"
     },
     "master": {
-      "name": "刘备",
-      "profile": "《三国演义》里的刘备。"
-    },
-    "room": {
-      "name": "三国",
-      "description": "三国演义里的世界"
+      "name": "陆小千",
+      "profile": "性别：男\n性格：善良正直\n其他：总是舍己为人，是傻妞的主人。"
     },
     "speaker": {
-      "userId": "12345678",
-      "password": "your_password",
-      "did": "小爱音箱Pro",
-      "ttsCommand": [5, 1],
-      "wakeUpCommand": [5, 3],
-      "callAIKeywords": ["如果你不想单次唤醒可以像我一样填一串很长的文本"],
-      "wakeUpKeywords": ["把曹操"],
-      "exitKeywords": ["飞走"],
-      "onEnterAI": ["进入唤醒模式"],
-      "onAIAsking": ["思考中"],
-      "onAIReplied": ["回答完毕"],
-      "onExitAI": ["已退出唤醒模式"]
+      "switchSpeakerKeywords": ["把声音换成"],
+      "callAIKeywords": ["请", "你", "傻妞"],
+      "wakeUpKeywords": ["打开", "进入", "召唤"],
+      "exitKeywords": ["关闭", "退出", "再见"],
+      "onEnterAI": ["你好，我是傻妞，很高兴认识你"],
+      "onExitAI": ["傻妞已退出"],
+      "onAIAsking": ["让我先想想", "请稍等"],
+      "onAIReplied": ["我说完了", "还有其他问题吗"],
+      "onAIError": ["啊哦，出错了，请稍后再试吧！"]
     }
   },
   "env": {
