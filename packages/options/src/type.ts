@@ -1,4 +1,5 @@
 import { type MiGPTConfig } from 'mi-gpt'
+import { type TTSConfig } from 'mi-gpt-tts'
 
 export type SpeakerConfig = Omit<
   Partial<MiGPTConfig['speaker']>,
@@ -35,4 +36,7 @@ export interface WholeConfig {
     AUDIO_ERROR?: string
     TTS_BASE_URL?: string
   }
+
+  // 运行 tts 服务所需的配置
+  tts?: TTSConfig
 }
