@@ -6,6 +6,7 @@ import { getStatus, type RunConfig, run, stop } from '@migptgui/controller'
 import fse from 'fs-extra'
 import { createTTS, type TTSConfig } from 'mi-gpt-tts'
 import { Readable } from 'node:stream'
+import * as ip from 'ip'
 
 export function runServer(options?: {
   open?: boolean
@@ -25,6 +26,11 @@ export function runServer(options?: {
 
   app.get('/api/status', async (req, res) => {
     res.json(getStatus())
+  })
+
+  // 在自己运行 tts 服务时需要有一个局域网或公网 IP 地址给小爱音箱来访问下面的 /tts/tts.mp3 接口
+  app.get('/api/myip', (req, res) => {
+    res.json({ ip: ip.address('public') })
   })
 
   app.post('/api/start', async (req, res) => {
