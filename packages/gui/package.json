@@ -4,8 +4,9 @@
   "scripts": {
     "clean": "rm -rf dist",
     "checktype": "tsc --noEmit",
-    "dev": "webpack serve --env mode=development",
-    "dev:local": "webpack --watch --env mode=development",
+    "dev": "webpack --env mode=development",
+    "dev:watch": "webpack --watch --env mode=development",
+    "dev:serve": "webpack serve --env mode=development",
     "build": "npm run checktype && webpack --env mode=production"
   },
   "files": [

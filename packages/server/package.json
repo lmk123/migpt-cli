@@ -27,6 +27,7 @@
     "express": "^4.17.1",
     "@migptgui/controller": "^1.0.0",
     "fs-extra": "^11.2.0",
+    "mi-gpt-tts": "^2.0.0",
     "open": "^8.4.2"
   },
   "devDependencies": {

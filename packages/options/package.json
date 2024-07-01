@@ -33,6 +33,7 @@
   "devDependencies": {
     "@types/lodash": "^4.17.5",
     "mi-gpt": "^4.0.0",
+    "mi-gpt-tts": "^2.0.0",
     "nodemon": "^3.1.4"
   }
 }
