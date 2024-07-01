@@ -38,5 +38,5 @@ export interface WholeConfig {
   }
 
   // 运行 tts 服务所需的配置
-  tts?: TTSConfig
+  tts?: TTSConfig & { provider?: string; publicIP?: string }
 }

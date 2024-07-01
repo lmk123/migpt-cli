@@ -65,11 +65,15 @@ export function Options(props: {
           config={{
             speaker: config.config.speaker,
             env: config.env,
+            tts: config.tts,
           }}
           onChange={(ttsConfig) => {
             const newState = produce(config, (draft) => {
               if (!_isEmpty(ttsConfig.env)) {
                 Object.assign(draft.env || (draft.env = {}), ttsConfig.env)
+              }
+              if (!_isEmpty(ttsConfig.tts)) {
+                Object.assign(draft.tts || (draft.tts = {}), ttsConfig.tts)
               }
               Object.assign(draft.config.speaker, ttsConfig.speaker)
             })

@@ -34,13 +34,14 @@ export function runServer(options?: {
   })
 
   app.post('/api/start', async (req, res) => {
-    const migptConfig = req.body as RunConfig & { tts?: TTSConfig }
+    const migptConfig = req.body as RunConfig & {
+      tts?: TTSConfig & { publicIP?: string }
+    }
 
-    if (migptConfig.tts) {
+    if (migptConfig.config.speaker.tts === 'custom' && migptConfig.tts) {
       tts = createTTS(migptConfig.tts)
-      migptConfig.config.speaker.tts = 'custom'
       // 需要让用户填写他部署 migpt gui 的设备的局域网 IP 地址
-      // migptConfig.env.TTS_BASE_URL = `http://192.168.2.2:${port}/tts`
+      migptConfig.env.TTS_BASE_URL = `http://${migptConfig.tts.publicIP}:${port}/tts`
     }
 
     // console.log('master: 收到 /api/start', migptConfig)

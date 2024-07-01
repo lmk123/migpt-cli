@@ -1,6 +1,7 @@
 import {
   Card,
   FormGroup,
+  HTMLSelect,
   InputGroup,
   Radio,
   RadioGroup,
@@ -8,6 +9,8 @@ import {
 import { produce } from 'immer'
 import { MultiInput } from './components/MultiInput'
 import { useState } from 'react'
+import { type TTSConfig } from 'mi-gpt-tts'
+import { TTSVolcano } from './components/TTSVolcano'
 
 interface TtsConfig {
   speaker: {
@@ -20,6 +23,12 @@ interface TtsConfig {
     AUDIO_ACTIVE?: string
     AUDIO_ERROR?: string
     TTS_BASE_URL?: string
+  }
+  tts?: Pick<TTSConfig, 'defaultSpeaker'> & {
+    volcano?: Partial<TTSConfig['volcano']>
+    //以下是界面逻辑需要的自定义字段
+    provider?: string
+    publicIP?: string
   }
 }
 
@@ -34,30 +43,51 @@ export function Tts(props: {
   return (
     <div className={'tw-space-y-4'}>
       <Card>
-        <FormGroup label={'TTS 引擎'} inline>
-          <RadioGroup
-            className={'tw-mb-0'}
-            inline
-            selectedValue={config.speaker.tts || 'xiaoai'}
+        <FormGroup
+          label={'TTS 引擎'}
+          inline
+          helperText={
+            config.tts?.provider === 'custom' ? (
+              <a href="https://migptgui.com/docs/faqs/tts" target={'_blank'}>
+                查看说明
+              </a>
+            ) : undefined
+          }
+        >
+          <HTMLSelect
+            value={config.tts?.provider || 'xiaoai'}
             onChange={(event) => {
               const value = event.currentTarget.value
               const newState = produce(config, (draft) => {
-                draft.speaker.tts = value === 'xiaoai' ? undefined : value
+                draft.speaker.tts = value === 'xiaoai' ? undefined : 'custom'
+                if (!draft.tts) {
+                  draft.tts = {}
+                }
+                draft.tts.provider = value
               })
               onChange(newState)
             }}
           >
-            <Radio label="默认" value={'xiaoai'} />
-            <Radio label="自定义" value={'custom'} />
-            {config.speaker.tts === 'custom' && (
-              <a href="https://migptgui.com/docs/faqs/tts" target={'_blank'}>
-                查看说明
-              </a>
-            )}
-          </RadioGroup>
+            <option value="xiaoai">默认</option>
+            <option value="volcano">火山</option>
+            {/*<option value="edge">Edge 大声朗读</option>*/}
+            {/*<option value="openai">OpenAI</option>*/}
+            <option value="custom">自定义</option>
+          </HTMLSelect>
         </FormGroup>
+        {config.tts?.provider === 'volcano' && (
+          <TTSVolcano
+            value={config.tts}
+            onChange={(value) => {
+              const newState = produce(config, (draft) => {
+                draft.tts = value
+              })
+              onChange(newState)
+            }}
+          />
+        )}
 
-        {config.speaker.tts === 'custom' && (
+        {config.tts?.provider === 'custom' && (
           <>
             <FormGroup label={'TTS_BASE_URL'} inline>
               <InputGroup
@@ -75,20 +105,43 @@ export function Tts(props: {
                 }}
               />
             </FormGroup>
+          </>
+        )}
 
-            <FormGroup label={'切换音色关键词'} inline>
-              <MultiInput
-                value={config.speaker.switchSpeakerKeywords}
-                onChange={(value) => {
+        {/* 只要不是小爱和自定义，就需要提供公网 IP 地址 */}
+        {config.speaker.tts === 'custom' &&
+          config.tts?.provider !== 'custom' && (
+            <FormGroup label={'IP 地址'} inline>
+              <InputGroup
+                required
+                value={config.tts?.publicIP || ''}
+                onValueChange={(newVal) => {
                   const newState = produce(config, (draft) => {
-                    draft.speaker.switchSpeakerKeywords = value
+                    if (!draft.tts) {
+                      draft.tts = {}
+                    }
+                    draft.tts.publicIP = newVal
                   })
-
                   onChange(newState)
                 }}
               />
             </FormGroup>
-          </>
+          )}
+
+        {/* 只要不是小爱，就能使用切换音色关键词 */}
+        {config.speaker.tts === 'custom' && (
+          <FormGroup label={'切换音色关键词'} inline>
+            <MultiInput
+              value={config.speaker.switchSpeakerKeywords}
+              onChange={(value) => {
+                const newState = produce(config, (draft) => {
+                  draft.speaker.switchSpeakerKeywords = value
+                })
+
+                onChange(newState)
+              }}
+            />
+          </FormGroup>
         )}
       </Card>
       <Card>
