@@ -6,15 +6,15 @@
     "clean-all": "npx nx run-many --target=clean",
     "build-all": "npx nx run-many --target=build",
     "u": "npx -y npm-check-updates -ws --root -u -x eslint,open",
-    "build:docker-server": "docker build -t lmk123/migpt-server --platform=linux/arm64,linux/amd64 ./docker",
-    "build:docker-server-version": "docker tag lmk123/migpt-server lmk123/migpt-server:$(node -p \"require('./apps/server/package.json').version\")",
-    "pub-cli": "npx nx run migpt-cli:build --verbose && npm publish --access public -w apps/cli",
-    "pub-server": "npx nx run migpt-server:build --verbose && npm publish --access public -w apps/server",
     "pub-options": "npx nx run @migptgui/options:build --verbose && npm publish --access public -w packages/options",
     "pub-options-preview": "npx nx run @migptgui/options-with-preview:build --verbose && npm publish --access public -w packages/options-with-preview",
-    "pub-controller": "npx nx run @migptgui/controller:build --verbose && npm publish --access public -w packages/controller",
     "pub-gui": "npx nx run @migptgui/gui:build --verbose && npm publish --access public -w packages/gui",
-    "pub-server-api": "npx nx run @migptgui/server:build --verbose && npm publish --access public -w packages/server"
+    "pub-controller": "npx nx run @migptgui/controller:build --verbose && npm publish --access public -w packages/controller",
+    "pub-server-api": "npx nx run @migptgui/server:build --verbose && npm publish --access public -w packages/server",
+    "pub-server": "npx nx run migpt-server:build --verbose && npm publish --access public -w apps/server",
+    "build:docker-server": "docker build -t lmk123/migpt-server --platform=linux/arm64,linux/amd64 ./docker",
+    "build:docker-server-version": "docker tag lmk123/migpt-server lmk123/migpt-server:$(node -p \"require('./apps/server/package.json').version\")",
+    "pub-cli": "npx nx run migpt-cli:build --verbose && npm publish --access public -w apps/cli"
   },
   "private": true,
   "devDependencies": {
