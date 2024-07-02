@@ -97,12 +97,6 @@ function clean(obj: any) {
   }
 }
 
-// 根据当前网页的 url 获取端口部分
-function getPort() {
-  const port = location.port
-  return port ? `:${port}` : ''
-}
-
 /**
  * 对 packages/options 中的配置进行规范化
  * @param config
@@ -111,15 +105,6 @@ export function normalize(config: GuiConfig) {
   return produce(config, (draft) => {
     // 删除 null / undefined / 空对象 / 数组中的空字符串
     clean(draft)
-
-    // 如果选择了内建的 TTS 引擎，则需要自行设置 TTS_BASE_URL
-    if (
-      draft.config.speaker.tts === 'custom' &&
-      draft.gui &&
-      draft.gui.ttsProvider !== 'custom'
-    ) {
-      draft.env.TTS_BASE_URL = `${location.protocol}//${draft.gui.publicIP}${getPort()}/tts`
-    }
   })
 }
 

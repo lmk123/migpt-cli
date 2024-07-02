@@ -21,12 +21,10 @@ export function runServer(options?: {
   const port = options?.port || 36592
 
   const isAuth = !!options?.users
-  let secretPath: string | undefined
-  let ttsPath = '/tts/tts.mp3'
-  if (isAuth) {
-    secretPath = nanoid()
-    ttsPath = `/${secretPath}${ttsPath}`
-  }
+  const ttsSecret = nanoid()
+  const ttsSecretPath = '/' + ttsSecret
+  const ttsPath = ttsSecretPath + '/tts/tts.mp3'
+
   const app = express()
 
   // 小爱音箱会通过这个接口获取语音合成的音频，所以不能给它加 basicAuth
@@ -95,8 +93,15 @@ export function runServer(options?: {
   app.post('/api/start', async (req, res) => {
     const migptConfig = req.body as GuiConfig
 
-    if (migptConfig.config.speaker.tts === 'custom' && migptConfig.tts) {
+    // 如果使用了内置的 TTS 服务
+    if (
+      migptConfig.config.speaker.tts === 'custom' &&
+      migptConfig.tts &&
+      migptConfig.gui
+    ) {
       tts = createTTS(migptConfig.tts)
+      migptConfig.env.TTS_BASE_URL = `http://${migptConfig.gui.publicIP}:${port}${ttsSecretPath}/tts`
+      // console.log('内建 TTS 服务地址：', migptConfig.env.TTS_BASE_URL)
     }
 
     // console.log('master: 收到 /api/start', migptConfig)
@@ -119,9 +124,6 @@ export function runServer(options?: {
   app.listen(port, () => {
     console.log('端口：', port)
     console.log('登录认证：', isAuth ? '已启用' : '未启用')
-    if (secretPath) {
-      console.log('TTS 秘密路径：', secretPath || '无')
-    }
     if (options?.open) {
       open(`http://localhost:${port}`)
     }
