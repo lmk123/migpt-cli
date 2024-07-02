@@ -59,8 +59,15 @@ export function App() {
                 icon={'reset'}
                 onClick={() => {
                   apis.reset().then(
-                    () => {
-                      alert('重置成功！')
+                    (response) => {
+                      if (response.success) {
+                        alert('重置成功！')
+                      } else {
+                        alert(
+                          '重置失败！\n' +
+                            JSON.stringify(response.error, null, 2),
+                        )
+                      }
                     },
                     (err) => {
                       alert('重置失败！' + err)

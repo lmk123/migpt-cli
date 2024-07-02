@@ -3,7 +3,6 @@ import express from 'express'
 import open from 'open'
 import os from 'node:os'
 import { getStatus, type RunConfig, run, stop } from '@migptgui/controller'
-import fs from 'node:fs/promises'
 import fse from 'fs-extra'
 import { createTTS } from 'mi-gpt-tts'
 import { Readable } from 'node:stream'
@@ -78,9 +77,12 @@ export function runServer(options?: {
     res.json({ ip: ip.address('public') })
   })
 
+  const defaultBotCwd = path.join(os.homedir(), '.migptgui/default/')
+
   // 删除机器人配置
   app.delete('/api/default', (req, res) => {
-    fs.unlink(path.join(os.homedir(), '.migptgui/default/')).then(
+    // console.log('准备删除路径：', path.join(os.homedir(), '.migptgui/default/'))
+    fse.remove(defaultBotCwd).then(
       () => {
         res.json({ success: true })
       },
@@ -107,9 +109,8 @@ export function runServer(options?: {
 
     // console.log('master: 收到 /api/start', migptConfig)
 
-    const cwd = path.join(os.homedir(), '.migpt/default/')
-    await fse.ensureDir(cwd)
-    await run(migptConfig as RunConfig, cwd)
+    await fse.ensureDir(defaultBotCwd)
+    await run(migptConfig as RunConfig, defaultBotCwd)
 
     res.json({ success: true })
   })
