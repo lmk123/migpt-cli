@@ -45,17 +45,7 @@ export function Tts(props: {
   return (
     <div className={'tw-space-y-4'}>
       <Card>
-        <FormGroup
-          label={'TTS 引擎'}
-          inline
-          helperText={
-            config.gui?.ttsProvider === 'custom' ? (
-              <a href="https://migptgui.com/docs/faqs/tts" target={'_blank'}>
-                查看说明
-              </a>
-            ) : undefined
-          }
-        >
+        <FormGroup label={'TTS 引擎'} inline>
           <HTMLSelect
             value={config.gui?.ttsProvider || 'xiaoai'}
             onChange={(event) => {
@@ -72,11 +62,21 @@ export function Tts(props: {
             }}
           >
             <option value="xiaoai">默认</option>
-            <option value="volcano">火山</option>
+            <option value="volcano">火山（豆包）</option>
             {/*<option value="edge">Edge 大声朗读</option>*/}
             {/*<option value="openai">OpenAI</option>*/}
             <option value="custom">自定义</option>
           </HTMLSelect>
+          {/* 只要不是小爱，就提供说明 */}
+          {config.config.speaker.tts === 'custom' && (
+            <a
+              href="https://migptgui.com/docs/faqs/tts"
+              target={'_blank'}
+              className={'tw-ml-2'}
+            >
+              查看说明
+            </a>
+          )}
         </FormGroup>
 
         {/* 只要不是小爱和自定义，就需要提供公网 IP 地址及端口 */}

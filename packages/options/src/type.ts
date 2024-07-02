@@ -51,10 +51,6 @@ export interface GuiConfig {
      */
     publicIP?: string
     /**
-     * 运行 migpt-server 的设备的端口
-     */
-    port?: number
-    /**
      * 小爱音箱的型号，比如 "小米 AI 音箱（第二代）"
      */
     speakerModel?: string

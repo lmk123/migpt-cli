@@ -53,6 +53,7 @@ export function TTSVolcano(props: TTSDouBaoProps) {
       </FormGroup>
       <FormGroup label={'音色'} inline>
         <InputGroup
+          placeholder={'默认'}
           value={value?.defaultSpeaker || ''}
           onValueChange={(val) => {
             onChange(

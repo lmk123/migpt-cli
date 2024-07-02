@@ -4,9 +4,10 @@ import open from 'open'
 import * as os from 'node:os'
 import { getStatus, type RunConfig, run, stop } from '@migptgui/controller'
 import fse from 'fs-extra'
-import { createTTS, type TTSConfig } from 'mi-gpt-tts'
+import { createTTS } from 'mi-gpt-tts'
 import { Readable } from 'node:stream'
 import * as ip from 'ip'
+import { type GuiConfig } from '@migptgui/options'
 
 export function runServer(options?: {
   open?: boolean
@@ -34,21 +35,17 @@ export function runServer(options?: {
   })
 
   app.post('/api/start', async (req, res) => {
-    const migptConfig = req.body as RunConfig & {
-      tts?: TTSConfig & { publicIP?: string }
-    }
+    const migptConfig = req.body as GuiConfig
 
     if (migptConfig.config.speaker.tts === 'custom' && migptConfig.tts) {
       tts = createTTS(migptConfig.tts)
-      // 需要让用户填写他部署 migpt gui 的设备的局域网 IP 地址
-      migptConfig.env.TTS_BASE_URL = `http://${migptConfig.tts.publicIP}:${port}/tts`
     }
 
     // console.log('master: 收到 /api/start', migptConfig)
 
     const cwd = path.join(os.tmpdir(), '.migpt/default/')
     await fse.ensureDir(cwd)
-    await run(migptConfig, cwd)
+    await run(migptConfig as RunConfig, cwd)
 
     res.json({ success: true })
   })
