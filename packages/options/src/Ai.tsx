@@ -128,9 +128,8 @@ export function Ai(props: {
                 <>
                   常用模型：
                   {selectedAI.models.map((model, i) => (
-                    <>
+                    <span key={model}>
                       <a
-                        key={model}
                         onClick={() => {
                           const newState = produce(config, (draft) => {
                             if (draft) {
@@ -145,7 +144,7 @@ export function Ai(props: {
                         {model}
                       </a>
                       {i === selectedAI.models!.length - 1 ? '' : '、'}
-                    </>
+                    </span>
                   ))}
                 </>
               )}
