@@ -1,7 +1,7 @@
 import { Card, Checkbox, FormGroup } from '@blueprintjs/core'
 import { MiGPTConfig } from 'mi-gpt'
 import { produce } from 'immer'
-import { NumberText } from './components/NumberText'
+import { NumberText } from './components/NumberText.js'
 
 type DevOptions = Pick<
   MiGPTConfig['speaker'],

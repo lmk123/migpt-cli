@@ -7,11 +7,11 @@ import {
   InputGroup,
 } from '@blueprintjs/core'
 import { produce } from 'immer'
-import { LotCommand } from './components/LotCommand'
-import { MultiInput } from './components/MultiInput'
-import { NumberText } from './components/NumberText'
-import { type SpeakerConfig } from './type'
-import { ChooseSpeaker, speakers } from './components/ChooseSpeaker'
+import { LotCommand } from './components/LotCommand.js'
+import { MultiInput } from './components/MultiInput.js'
+import { NumberText } from './components/NumberText.js'
+import { type SpeakerConfig } from './type.js'
+import { ChooseSpeaker, speakers } from './components/ChooseSpeaker.js'
 
 interface SpeakerPropsConfig {
   config: {

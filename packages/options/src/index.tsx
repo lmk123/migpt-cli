@@ -1,4 +1,4 @@
-export { Options } from './Options'
-export { defaults } from './defaults'
-export { type GuiConfig } from './type'
-export * from './utils'
+export { Options } from './Options.js'
+export { defaults } from './defaults.js'
+export { type GuiConfig } from './type.js'
+export * from './utils.js'

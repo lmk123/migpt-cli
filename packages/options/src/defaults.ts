@@ -1,4 +1,4 @@
-import { GuiConfig } from './type'
+import { type GuiConfig } from './type.js'
 
 export const defaults: GuiConfig = {
   config: {

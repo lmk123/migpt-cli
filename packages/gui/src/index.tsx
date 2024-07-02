@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client'
 import './css'
-import { App } from './App'
+import { App } from './App.tsx'
 
 const container = document.getElementById('app')
 if (!container) {

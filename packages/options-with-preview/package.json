@@ -1,26 +1,15 @@
 {
   "name": "@migptgui/options-with-preview",
   "version": "1.2.0",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "style": "index.css",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    },
-    "./index.css": "./index.css"
-  },
   "scripts": {
     "clean": "rm -rf dist",
-    "build:mjs": "tsc -p tsconfig.build.json -m ESNext --moduleResolution Bundler -d && js-to-mjs dist",
-    "build:cjs": "tsc -p tsconfig.build.json -m NodeNext",
-    "build": "npm run build:mjs && npm run build:cjs",
-    "dev:mjs": "tsc -m ESNext --moduleResolution Bundler -d && js-to-mjs dist",
-    "dev:cjs": "tsc -m NodeNext",
-    "dev": "npm run dev:mjs && npm run dev:cjs",
-    "dev:watch": "nodemon --watch src -e ts,tsx --exec \"npm run dev\""
+    "build": "tsc -p tsconfig.build.json -d",
+    "dev": "tsc -d",
+    "dev:watch": "tsc -d -w"
   },
   "files": [
     "dist",
@@ -33,7 +22,6 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.17.5",
-    "mi-gpt": "^4.0.0",
-    "nodemon": "^3.1.4"
+    "mi-gpt": "^4.0.0"
   }
 }

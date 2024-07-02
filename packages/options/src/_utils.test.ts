@@ -1,4 +1,4 @@
-import { mergeWithUndefined } from './_utils'
+import { mergeWithUndefined } from './_utils.js'
 import { test, expect, describe } from '@jest/globals'
 
 describe('mergeWithUndefined', () => {

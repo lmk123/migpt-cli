@@ -1,6 +1,6 @@
 import { Card, FormGroup, InputGroup } from '@blueprintjs/core'
 import { produce } from 'immer'
-import { ChooseAI, ais } from './components/ChooseAI'
+import { ChooseAI, ais } from './components/ChooseAI.js'
 import { useState } from 'react'
 
 type AiConfig = {

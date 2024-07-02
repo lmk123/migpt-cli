@@ -1,6 +1,7 @@
 import childProcess, { type ChildProcess } from 'node:child_process'
-import * as path from 'node:path'
+import path from 'node:path'
 import { type MiGPTConfig } from 'mi-gpt'
+import { fileURLToPath } from 'node:url'
 
 export interface RunConfig {
   /**
@@ -41,19 +42,10 @@ function killChild() {
   })
 }
 
-function isESM() {
-  try {
-    require.resolve('@migptgui/controller')
-    return false
-  } catch {
-    return true
-  }
-}
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
-const childFilePath = path.join(
-  __dirname,
-  './child_process' + (isESM() ? '.mjs' : '.js'),
-)
+const childFilePath = path.join(__dirname, './child_process.js')
 
 export async function run(config: RunConfig, cwd?: string) {
   await killChild()

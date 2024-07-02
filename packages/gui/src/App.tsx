@@ -13,7 +13,7 @@ import {
   Navbar,
 } from '@blueprintjs/core'
 import { useState } from 'react'
-import * as apis from './apis'
+import * as apis from './apis.ts'
 
 FocusStyleManager.onlyShowFocusOnTabs()
 

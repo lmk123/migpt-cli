@@ -1,4 +1,4 @@
-import { type GuiConfig } from './type'
+import { type GuiConfig } from './type.js'
 import { produce } from 'immer'
 import _isEmpty from 'lodash/isEmpty.js'
 

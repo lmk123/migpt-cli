@@ -1,7 +1,7 @@
-const path = require('node:path')
+import path from 'node:path'
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   prefix: 'tw-',
   content: [
     './src/**/*.{ts,tsx,html,js}',

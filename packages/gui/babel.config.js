@@ -3,7 +3,7 @@
 // 对 node_modules 下的文件使用 babel-loader 参考了以下链接：
 // @see https://stackoverflow.com/a/52415747
 
-module.exports = {
+export default {
   sourceType: 'unambiguous',
   ignore: [/\/core-js/],
   presets: [

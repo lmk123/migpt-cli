@@ -1,1 +1,1 @@
-export { OptionsWithPreview } from './OptionsWithPreview'
+export { OptionsWithPreview } from './OptionsWithPreview.js'

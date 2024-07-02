@@ -7,10 +7,10 @@ import {
   RadioGroup,
 } from '@blueprintjs/core'
 import { produce } from 'immer'
-import { MultiInput } from './components/MultiInput'
+import { MultiInput } from './components/MultiInput.js'
 import { useState } from 'react'
 import { type TTSConfig } from 'mi-gpt-tts'
-import { TTSVolcano } from './components/TTSVolcano'
+import { TTSVolcano } from './components/TTSVolcano.js'
 
 interface TtsConfig {
   config: {

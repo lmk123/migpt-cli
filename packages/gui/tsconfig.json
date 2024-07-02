@@ -1,8 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
     "lib": ["ESNext", "DOM"]
   },
   "include": ["src/**/*"]

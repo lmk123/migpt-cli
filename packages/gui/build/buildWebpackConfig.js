@@ -1,18 +1,22 @@
-const path = require('node:path')
-const webpack = require('webpack')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-// const CopyPlugin = require('copy-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const TerserJSPlugin = require('terser-webpack-plugin')
-const OptimizeCSSAssetsPlugin = require('css-minimizer-webpack-plugin')
-const BundleAnalyzerPlugin =
-  require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+import path from 'node:path'
+import webpack from 'webpack'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+// import CopyPlugin from 'copy-webpack-plugin'
+import MiniCssExtractPlugin from 'mini-css-extract-plugin'
+import TerserJSPlugin from 'terser-webpack-plugin'
+import OptimizeCSSAssetsPlugin from 'css-minimizer-webpack-plugin'
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
+
+import { fileURLToPath } from 'node:url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 /**
  * 根据参数产出不同的 webpack 配置
  * @param mode {"production"|"development"}
  */
-module.exports = function buildWebpackConfig(mode) {
+export default function buildWebpackConfig(mode) {
   const IS_PROD = mode === 'production'
 
   const outputPath = path.join(__dirname, '../dist/')
@@ -37,25 +41,6 @@ module.exports = function buildWebpackConfig(mode) {
         {
           test: /\.s?css$/i,
           oneOf: [
-            {
-              resourceQuery: /toString/,
-              use: [
-                // 将 css import 成纯字符串
-                // TODO: 似乎可以用 css-loader 直接实现
-                'to-string-loader',
-                {
-                  loader: 'css-loader',
-                  options: {
-                    importLoaders: 1,
-                    esModule: false,
-                  },
-                },
-                {
-                  loader: 'postcss-loader',
-                },
-                'sass-loader',
-              ],
-            },
             {
               use: [
                 // 官方推荐在 dev 模式时使用 style-loader，在 build 时才用 extract，

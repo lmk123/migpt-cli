@@ -1,5 +1,5 @@
 import { produce } from 'immer'
-import { NumberText } from './NumberText'
+import { NumberText } from './NumberText.js'
 
 export function LotCommand(props: {
   value?: (number | undefined)[]

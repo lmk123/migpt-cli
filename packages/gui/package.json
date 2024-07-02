@@ -1,6 +1,8 @@
 {
   "name": "@migptgui/gui",
   "version": "1.5.0",
+  "type": "module",
+  "main": "index.js",
   "scripts": {
     "clean": "rm -rf dist",
     "checktype": "tsc --noEmit",

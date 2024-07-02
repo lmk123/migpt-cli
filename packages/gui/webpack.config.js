@@ -1,5 +1,5 @@
-const buildWebpackConfig = require('./build/buildWebpackConfig')
+import buildWebpackConfig from './build/buildWebpackConfig.js'
 
-module.exports = (env) => {
+export default (env) => {
   return buildWebpackConfig(env.mode)
 }

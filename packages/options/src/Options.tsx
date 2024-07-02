@@ -1,12 +1,12 @@
-import { Characters } from './Characters'
+import { Characters } from './Characters.js'
 import { produce } from 'immer'
-import { Speaker } from './Speaker'
-import { type GuiConfig } from './type'
+import { Speaker } from './Speaker.js'
+import { type GuiConfig } from './type.js'
 import { H3 } from '@blueprintjs/core'
-import { Ai } from './Ai'
-import { Tts } from './Tts'
-import { Dev } from './Dev'
-import { mergeWithUndefined } from './_utils'
+import { Ai } from './Ai.js'
+import { Tts } from './Tts.js'
+import { Dev } from './Dev.js'
+import { mergeWithUndefined } from './_utils.js'
 
 export function Options(props: {
   config: GuiConfig

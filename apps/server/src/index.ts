@@ -3,6 +3,7 @@
 import { runServer } from '@migptgui/server'
 import path from 'node:path'
 import { program } from 'commander'
+import { fileURLToPath } from 'node:url'
 
 program
   .option('-p, --port <number>', '后台服务的端口。')
@@ -15,8 +16,7 @@ const options = program.opts()
 runServer({
   port: options.port,
   open: options.open,
-  staticPath: path.join(
-    path.dirname(require.resolve('@migptgui/gui')),
-    './dist/',
+  staticPath: fileURLToPath(
+    path.dirname(import.meta.resolve('@migptgui/gui')) + '/dist/',
   ),
 })
