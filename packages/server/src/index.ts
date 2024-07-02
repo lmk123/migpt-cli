@@ -21,7 +21,6 @@ export function runServer(options?: {
   app.use(express.json())
 
   if (options?.staticPath) {
-    console.log(options.staticPath)
     app.use(express.static(options.staticPath))
   }
 
