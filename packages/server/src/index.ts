@@ -9,16 +9,61 @@ import { createTTS } from 'mi-gpt-tts'
 import { Readable } from 'node:stream'
 import ip from 'ip'
 import { type GuiConfig } from '@migptgui/options'
+import baseAuth from 'express-basic-auth'
+import { nanoid } from 'nanoid'
 
 export function runServer(options?: {
   open?: boolean
   port?: number
+  users?: Record<string, string>
   staticPath?: string
 }) {
   const port = options?.port || 36592
 
+  const isAuth = !!options?.users
+  let secretPath: string | undefined
+  let ttsPath = '/tts/tts.mp3'
+  if (isAuth) {
+    secretPath = nanoid()
+    ttsPath = `/${secretPath}${ttsPath}`
+  }
   const app = express()
+
+  // 小爱音箱会通过这个接口获取语音合成的音频，所以不能给它加 basicAuth
+  app.get(ttsPath, (req, res) => {
+    // console.log('master: 进入 /tts/tts.mp3')
+    if (!tts) {
+      res.status(500).send('TTS not initialized')
+      return
+    }
+
+    const options: Record<string, unknown> = {}
+    const nUrl = req.url.replace('+text=', '&text=') // 修正请求 URL
+    const url = new URL('http://localhost' + nUrl)
+    for (const [key, value] of url.searchParams.entries()) {
+      options[key] = value
+    }
+
+    const audioStream = new Readable({ read() {} })
+    options.stream = audioStream
+
+    // console.log('master: 开始合成语音。配置：', options)
+
+    tts(options)
+
+    res.writeHead(200, {
+      'Transfer-Encoding': 'chunked',
+      'Content-Type': 'audio/mp3',
+    })
+
+    audioStream.pipe(res)
+  })
+
   app.use(express.json())
+
+  if (options?.users) {
+    app.use(baseAuth({ users: options.users, challenge: true }))
+  }
 
   if (options?.staticPath) {
     app.use(express.static(options.staticPath))
@@ -63,35 +108,6 @@ export function runServer(options?: {
     res.json({ success: true })
   })
 
-  app.get('/tts/tts.mp3', (req, res) => {
-    // console.log('master: 进入 /tts/tts.mp3')
-    if (!tts) {
-      res.status(500).send('TTS not initialized')
-      return
-    }
-
-    const options: Record<string, unknown> = {}
-    const nUrl = req.url.replace('+text=', '&text=') // 修正请求 URL
-    const url = new URL('http://localhost' + nUrl)
-    for (const [key, value] of url.searchParams.entries()) {
-      options[key] = value
-    }
-
-    const audioStream = new Readable({ read() {} })
-    options.stream = audioStream
-
-    // console.log('master: 开始合成语音。配置：', options)
-
-    tts(options)
-
-    res.writeHead(200, {
-      'Transfer-Encoding': 'chunked',
-      'Content-Type': 'audio/mp3',
-    })
-
-    audioStream.pipe(res)
-  })
-
   app.post('/api/stop', async (req, res) => {
     // console.log('master: 收到 /api/stop')
 
@@ -101,6 +117,11 @@ export function runServer(options?: {
   })
 
   app.listen(port, () => {
+    console.log('端口：', port)
+    console.log('登录认证：', isAuth ? '已启用' : '未启用')
+    if (secretPath) {
+      console.log('TTS 秘密路径：', secretPath || '无')
+    }
     if (options?.open) {
       open(`http://localhost:${port}`)
     }
