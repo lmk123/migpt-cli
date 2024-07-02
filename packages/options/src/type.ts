@@ -51,6 +51,10 @@ export interface GuiConfig {
      */
     publicIP?: string
     /**
+     * 端口号
+     */
+    port?: number
+    /**
      * 小爱音箱的型号，比如 "小米 AI 音箱（第二代）"
      */
     speakerModel?: string

@@ -97,6 +97,11 @@ function clean(obj: any) {
   }
 }
 
+function getPort() {
+  const port = location.port
+  return port ? parseInt(port) : location.protocol === 'https:' ? 443 : 80
+}
+
 /**
  * 对 packages/options 中的配置进行规范化
  * @param config
@@ -105,6 +110,11 @@ export function normalize(config: GuiConfig) {
   return produce(config, (draft) => {
     // 删除 null / undefined / 空对象 / 数组中的空字符串
     clean(draft)
+    // 以浏览器地址栏里的端口号为准，例如通过 docker 部署的人可能会更改映射到主机的端口号
+    if (!draft.gui) {
+      draft.gui = {}
+    }
+    draft.gui.port = getPort()
   })
 }
 

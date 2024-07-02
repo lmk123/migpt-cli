@@ -96,11 +96,12 @@ export function runServer(options?: {
     // 如果使用了内置的 TTS 服务
     if (
       migptConfig.config.speaker.tts === 'custom' &&
-      migptConfig.tts &&
-      migptConfig.gui
+      migptConfig.gui &&
+      migptConfig.gui.ttsProvider !== 'custom' &&
+      migptConfig.tts
     ) {
       tts = createTTS(migptConfig.tts)
-      migptConfig.env.TTS_BASE_URL = `http://${migptConfig.gui.publicIP}:${port}${ttsSecretPath}/tts`
+      migptConfig.env.TTS_BASE_URL = `http://${migptConfig.gui.publicIP}:${migptConfig.gui.port || port}${ttsSecretPath}/tts`
       // console.log('内建 TTS 服务地址：', migptConfig.env.TTS_BASE_URL)
     }
 
