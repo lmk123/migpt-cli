@@ -1,18 +1,16 @@
 import { Characters } from './Characters'
-import _set from 'lodash/set.js'
-import _get from 'lodash/get.js'
 import { produce } from 'immer'
 import { Speaker } from './Speaker'
-import { type WholeConfig } from './type'
+import { type GuiConfig } from './type'
 import { H3 } from '@blueprintjs/core'
 import { Ai } from './Ai'
 import { Tts } from './Tts'
-import _isEmpty from 'lodash/isEmpty.js'
 import { Dev } from './Dev'
+import { mergeWithUndefined } from './_utils'
 
 export function Options(props: {
-  config: WholeConfig
-  onChange: (config: WholeConfig) => void
+  config: GuiConfig
+  onChange: (config: GuiConfig) => void
 }) {
   const { config, onChange } = props
 
@@ -24,12 +22,8 @@ export function Options(props: {
           config={config.config}
           onChange={(characterConfig) => {
             const newState = produce(config, (draft) => {
-              const mc = _get(draft, 'config', {})
-              Object.assign(mc, characterConfig)
-              const result = draft || {}
-              _set(result, 'config', mc)
-              return result
-            })!
+              mergeWithUndefined(draft.config, characterConfig)
+            })
             onChange(newState)
           }}
         />
@@ -37,10 +31,10 @@ export function Options(props: {
       <div>
         <H3>音箱</H3>
         <Speaker
-          config={config.config.speaker}
+          config={config}
           onChange={(speakerConfig) => {
             const newState = produce(config, (draft) => {
-              Object.assign(draft.config.speaker, speakerConfig)
+              mergeWithUndefined(draft, speakerConfig)
             })
             onChange(newState)
           }}
@@ -52,8 +46,7 @@ export function Options(props: {
           config={config.env}
           onChange={(aiConfig) => {
             const newState = produce(config, (draft) => {
-              if (_isEmpty(aiConfig)) return
-              Object.assign(draft.env || (draft.env = {}), aiConfig)
+              Object.assign(draft.env, aiConfig)
             })
             onChange(newState)
           }}
@@ -62,20 +55,10 @@ export function Options(props: {
       <div>
         <H3>语音服务</H3>
         <Tts
-          config={{
-            speaker: config.config.speaker,
-            env: config.env,
-            tts: config.tts,
-          }}
+          config={config}
           onChange={(ttsConfig) => {
             const newState = produce(config, (draft) => {
-              if (!_isEmpty(ttsConfig.env)) {
-                Object.assign(draft.env || (draft.env = {}), ttsConfig.env)
-              }
-              if (!_isEmpty(ttsConfig.tts)) {
-                Object.assign(draft.tts || (draft.tts = {}), ttsConfig.tts)
-              }
-              Object.assign(draft.config.speaker, ttsConfig.speaker)
+              mergeWithUndefined(draft, ttsConfig)
             })
             onChange(newState)
           }}

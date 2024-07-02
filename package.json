@@ -2,6 +2,7 @@
   "name": "@mgc/root",
   "version": "0.0.0",
   "scripts": {
+    "test": "jest && nx run-many --target=test --exclude @mgc/root",
     "clean-all": "npx nx run-many --target=clean",
     "build-all": "npx nx run-many --target=build",
     "u": "npx -y npm-check-updates -ws --root -u -x eslint,open",
@@ -23,6 +24,7 @@
     "@typescript-eslint/eslint-plugin": "^7.13.1",
     "@typescript-eslint/parser": "^7.13.1",
     "eslint": "^8.57.0",
+    "jest": "^29.7.0",
     "nx": "^19.3.0",
     "prettier": "^3.3.2",
     "prettier-plugin-tailwindcss": "^0.6.5"

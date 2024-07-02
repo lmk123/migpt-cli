@@ -3,16 +3,16 @@ import {
   Options,
   exportFile,
   defaults,
-  type WholeConfig,
+  type GuiConfig,
   strip,
 } from '@migptgui/options'
 import { Tabs, Tab, Button, TextArea } from '@blueprintjs/core'
 
-function toWholeConfig(config: WholeConfig) {
+function toWholeConfig(config: GuiConfig) {
   return JSON.stringify(config, null, 2)
 }
 
-function envToTxt(config: WholeConfig) {
+function envToTxt(config: GuiConfig) {
   return Object.entries(
     Object.assign(
       {
@@ -27,7 +27,7 @@ function envToTxt(config: WholeConfig) {
     .join('\n')
 }
 
-function jsonTojs(config: WholeConfig) {
+function jsonTojs(config: GuiConfig) {
   return `export default ${JSON.stringify(config.config, null, 2)}`
 }
 

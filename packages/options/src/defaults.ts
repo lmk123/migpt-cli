@@ -1,6 +1,6 @@
-import { WholeConfig } from './type'
+import { GuiConfig } from './type'
 
-export const defaults: WholeConfig = {
+export const defaults: GuiConfig = {
   config: {
     bot: {
       name: '傻妞',
@@ -17,6 +17,8 @@ export const defaults: WholeConfig = {
     // 默认值
     // @see https://github.com/idootop/mi-gpt/blob/main/src/services/speaker/ai.ts
     speaker: {
+      userId: '',
+      password: '',
       switchSpeakerKeywords: ['把声音换成'],
       callAIKeywords: ['请', '你', '傻妞'],
       wakeUpKeywords: ['打开', '进入', '召唤'],
@@ -27,5 +29,10 @@ export const defaults: WholeConfig = {
       onAIReplied: ['我说完了', '还有其他问题吗'],
       onAIError: ['啊哦，出错了，请稍后再试吧！'],
     },
+  },
+  env: {
+    OPENAI_BASE_URL: '',
+    OPENAI_API_KEY: '',
+    OPENAI_MODEL: '',
   },
 }

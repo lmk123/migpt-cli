@@ -12,21 +12,34 @@ import { MultiInput } from './components/MultiInput'
 import { NumberText } from './components/NumberText'
 import { type SpeakerConfig } from './type'
 import { ChooseSpeaker, speakers } from './components/ChooseSpeaker'
-import { useState } from 'react'
+
+interface SpeakerPropsConfig {
+  config: {
+    speaker: SpeakerConfig
+  }
+  gui?: {
+    speakerModel?: string
+  }
+}
 
 export function Speaker(props: {
-  config: SpeakerConfig
-  onChange: (config: SpeakerConfig) => void
+  config: {
+    config: {
+      speaker: SpeakerConfig
+    }
+    gui?: {
+      speakerModel?: string
+    }
+  }
+  onChange: (config: SpeakerPropsConfig) => void
 }) {
   const { config, onChange } = props
 
-  const [speaker, setSpeaker] = useState<string | null>(null)
-
-  const isSpeakerSelected = !!speaker
+  const isSpeakerSelected = !!config.gui?.speakerModel
   const isSpeakerSupport = isSpeakerSelected
-    ? !!speakers.find((s) => s.name === speaker)?.options
+    ? !!speakers.find((s) => s.name === config.gui?.speakerModel)?.options
     : true
-  const noSupportStream = config.streamResponse === false
+  const noSupportStream = config.config.speaker.streamResponse === false
 
   return (
     <div className={'tw-space-y-4'}>
@@ -58,13 +71,17 @@ export function Speaker(props: {
         }
       >
         <ChooseSpeaker
-          value={speaker}
+          value={config.gui?.speakerModel || ''}
           onChange={(speakerName) => {
-            setSpeaker(speakerName)
             const newState = produce(config, (draft) => {
+              if (!draft.gui) {
+                draft.gui = {}
+              }
+              draft.gui.speakerModel = speakerName || undefined
+
               // 不选择，代表用户自己填写
               if (!speakerName) {
-                Object.assign(draft, {
+                Object.assign(draft.config.speaker, {
                   ttsCommand: undefined,
                   wakeUpCommand: undefined,
                   playingCommand: undefined,
@@ -76,7 +93,7 @@ export function Speaker(props: {
               const speakerConfig = speakers.find((s) => s.name === speakerName)
               if (speakerConfig) {
                 Object.assign(
-                  draft,
+                  draft.config.speaker,
                   speakerConfig.options || {
                     // 没有 options，表示用户选择的型号不支持 MiGPT GUI
                     ttsCommand: undefined,
@@ -112,10 +129,10 @@ export function Speaker(props: {
         >
           <InputGroup
             required
-            value={config.userId || ''}
+            value={config.config.speaker.userId}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
-                draft.userId = newVal
+                draft.config.speaker.userId = newVal
               })
               onChange(newState)
             }}
@@ -125,10 +142,10 @@ export function Speaker(props: {
           <InputGroup
             required
             type={'password'}
-            value={config.password || ''}
+            value={config.config.speaker.password}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
-                draft.password = newVal
+                draft.config.speaker.password = newVal
               })
               onChange(newState)
             }}
@@ -143,10 +160,10 @@ export function Speaker(props: {
         >
           <InputGroup
             required
-            value={config.did || ''}
+            value={config.config.speaker.did || ''}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
-                draft.did = newVal
+                draft.config.speaker.did = newVal
               })
               onChange(newState)
             }}
@@ -160,11 +177,11 @@ export function Speaker(props: {
           <LotCommand
             disabled={isSpeakerSelected}
             required
-            value={config.ttsCommand}
+            value={config.config.speaker.ttsCommand}
             count={2}
             onChange={(value) => {
               const newState = produce(config, (draft) => {
-                draft.ttsCommand = value
+                draft.config.speaker.ttsCommand = value
               })
               onChange(newState)
             }}
@@ -178,11 +195,11 @@ export function Speaker(props: {
           <LotCommand
             disabled={isSpeakerSelected}
             required
-            value={config.wakeUpCommand}
+            value={config.config.speaker.wakeUpCommand}
             count={2}
             onChange={(value) => {
               const newState = produce(config, (draft) => {
-                draft.wakeUpCommand = value
+                draft.config.speaker.wakeUpCommand = value
               })
               onChange(newState)
             }}
@@ -195,11 +212,11 @@ export function Speaker(props: {
         >
           <LotCommand
             disabled={isSpeakerSelected}
-            value={config.playingCommand}
+            value={config.config.speaker.playingCommand}
             count={3}
             onChange={(value) => {
               const newState = produce(config, (draft) => {
-                draft.playingCommand = value
+                draft.config.speaker.playingCommand = value
               })
               onChange(newState)
             }}
@@ -217,10 +234,10 @@ export function Speaker(props: {
         </p>
         <FormGroup label={'调用 AI 关键词'} inline>
           <MultiInput
-            value={config.callAIKeywords}
+            value={config.config.speaker.callAIKeywords}
             onChange={(value) => {
               const newState = produce(config, (draft) => {
-                draft.callAIKeywords = value
+                draft.config.speaker.callAIKeywords = value
               })
 
               onChange(newState)
@@ -247,12 +264,14 @@ export function Speaker(props: {
           <Checkbox
             disabled={isSpeakerSelected}
             checked={
-              config.streamResponse == null ? true : config.streamResponse
+              config.config.speaker.streamResponse == null
+                ? true
+                : config.config.speaker.streamResponse
             }
             onChange={(event) => {
               const newVal = event.target.checked
               const newState = produce(config, (draft) => {
-                draft.streamResponse = newVal ? undefined : false
+                draft.config.speaker.streamResponse = newVal ? undefined : false
               })
               onChange(newState)
             }}
@@ -269,10 +288,10 @@ export function Speaker(props: {
         >
           <MultiInput
             disabled={noSupportStream}
-            value={config.wakeUpKeywords}
+            value={config.config.speaker.wakeUpKeywords}
             onChange={(value) => {
               const newState = produce(config, (draft) => {
-                draft.wakeUpKeywords = value
+                draft.config.speaker.wakeUpKeywords = value
               })
               onChange(newState)
             }}
@@ -287,10 +306,10 @@ export function Speaker(props: {
         >
           <MultiInput
             disabled={noSupportStream}
-            value={config.exitKeywords}
+            value={config.config.speaker.exitKeywords}
             onChange={(value) => {
               const newState = produce(config, (draft) => {
-                draft.exitKeywords = value
+                draft.config.speaker.exitKeywords = value
               })
               onChange(newState)
             }}
@@ -306,15 +325,16 @@ export function Speaker(props: {
             disabled={noSupportStream}
             placeholder={'30'}
             value={
-              config.exitKeepAliveAfter == null
+              config.config.speaker.exitKeepAliveAfter == null
                 ? null
-                : config.exitKeepAliveAfter
+                : config.config.speaker.exitKeepAliveAfter
             }
             min={1}
             pattern={'\\d+'}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
-                draft.exitKeepAliveAfter = newVal == null ? undefined : newVal
+                draft.config.speaker.exitKeepAliveAfter =
+                  newVal == null ? undefined : newVal
               })
               onChange(newState)
             }}
@@ -336,12 +356,17 @@ export function Speaker(props: {
           <NumberText
             disabled={noSupportStream}
             placeholder={'1000'}
-            value={config.checkInterval == null ? null : config.checkInterval}
+            value={
+              config.config.speaker.checkInterval == null
+                ? null
+                : config.config.speaker.checkInterval
+            }
             min={500}
             pattern={'\\d+'}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
-                draft.checkInterval = newVal == null ? undefined : newVal
+                draft.config.speaker.checkInterval =
+                  newVal == null ? undefined : newVal
               })
               onChange(newState)
             }}
@@ -364,15 +389,16 @@ export function Speaker(props: {
             disabled={noSupportStream}
             placeholder={'3'}
             value={
-              config.checkTTSStatusAfter == null
+              config.config.speaker.checkTTSStatusAfter == null
                 ? null
-                : config.checkTTSStatusAfter
+                : config.config.speaker.checkTTSStatusAfter
             }
             min={1}
             pattern={'\\d+'}
             onValueChange={(newVal) => {
               const newState = produce(config, (draft) => {
-                draft.checkTTSStatusAfter = newVal == null ? undefined : newVal
+                draft.config.speaker.checkTTSStatusAfter =
+                  newVal == null ? undefined : newVal
               })
 
               onChange(newState)
@@ -395,10 +421,10 @@ export function Speaker(props: {
           inline
         >
           <MultiInput
-            value={config.onEnterAI}
+            value={config.config.speaker.onEnterAI}
             onChange={(value) => {
               const newState = produce(config, (draft) => {
-                draft.onEnterAI = value
+                draft.config.speaker.onEnterAI = value
               })
 
               onChange(newState)
@@ -412,10 +438,10 @@ export function Speaker(props: {
           inline
         >
           <MultiInput
-            value={config.onExitAI}
+            value={config.config.speaker.onExitAI}
             onChange={(value) => {
               const newState = produce(config, (draft) => {
-                draft.onExitAI = value
+                draft.config.speaker.onExitAI = value
               })
 
               onChange(newState)
@@ -429,10 +455,10 @@ export function Speaker(props: {
           inline
         >
           <MultiInput
-            value={config.onAIAsking}
+            value={config.config.speaker.onAIAsking}
             onChange={(value) => {
               const newState = produce(config, (draft) => {
-                draft.onAIAsking = value
+                draft.config.speaker.onAIAsking = value
               })
 
               onChange(newState)
@@ -446,10 +472,10 @@ export function Speaker(props: {
           inline
         >
           <MultiInput
-            value={config.onAIReplied}
+            value={config.config.speaker.onAIReplied}
             onChange={(value) => {
               const newState = produce(config, (draft) => {
-                draft.onAIReplied = value
+                draft.config.speaker.onAIReplied = value
               })
 
               onChange(newState)
@@ -463,10 +489,10 @@ export function Speaker(props: {
           inline
         >
           <MultiInput
-            value={config.onAIError}
+            value={config.config.speaker.onAIError}
             onChange={(value) => {
               const newState = produce(config, (draft) => {
-                draft.onAIError = value
+                draft.config.speaker.onAIError = value
               })
 
               onChange(newState)

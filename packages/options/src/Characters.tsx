@@ -9,12 +9,12 @@ import {
   TextArea,
 } from '@blueprintjs/core'
 import { produce } from 'immer'
-import { WholeConfig } from './type'
+import { GuiConfig } from './type'
 import { defaults } from './defaults'
 import { useRef } from 'react'
 
 type ProfileConfig = Pick<
-  WholeConfig['config'],
+  GuiConfig['config'],
   'systemTemplate' | 'master' | 'room' | 'bot'
 >
 

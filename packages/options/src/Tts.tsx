@@ -13,22 +13,24 @@ import { type TTSConfig } from 'mi-gpt-tts'
 import { TTSVolcano } from './components/TTSVolcano'
 
 interface TtsConfig {
-  speaker: {
-    tts?: string
-    switchSpeakerKeywords?: string[]
+  config: {
+    speaker: {
+      tts?: string
+      switchSpeakerKeywords?: string[]
+    }
   }
-  env?: {
+  env: {
     AUDIO_SILENT?: string
     AUDIO_BEEP?: string
     AUDIO_ACTIVE?: string
     AUDIO_ERROR?: string
     TTS_BASE_URL?: string
   }
-  tts?: Pick<TTSConfig, 'defaultSpeaker'> & {
-    volcano?: Partial<TTSConfig['volcano']>
-    //以下是界面逻辑需要的自定义字段
-    provider?: string
+  tts?: Pick<TTSConfig, 'defaultSpeaker' | 'volcano'>
+  gui?: {
+    ttsProvider?: string
     publicIP?: string
+    port?: number
   }
 }
 
@@ -47,7 +49,7 @@ export function Tts(props: {
           label={'TTS 引擎'}
           inline
           helperText={
-            config.tts?.provider === 'custom' ? (
+            config.gui?.ttsProvider === 'custom' ? (
               <a href="https://migptgui.com/docs/faqs/tts" target={'_blank'}>
                 查看说明
               </a>
@@ -55,15 +57,16 @@ export function Tts(props: {
           }
         >
           <HTMLSelect
-            value={config.tts?.provider || 'xiaoai'}
+            value={config.gui?.ttsProvider || 'xiaoai'}
             onChange={(event) => {
               const value = event.currentTarget.value
               const newState = produce(config, (draft) => {
-                draft.speaker.tts = value === 'xiaoai' ? undefined : 'custom'
-                if (!draft.tts) {
-                  draft.tts = {}
+                draft.config.speaker.tts =
+                  value === 'xiaoai' ? undefined : 'custom'
+                if (!draft.gui) {
+                  draft.gui = {}
                 }
-                draft.tts.provider = value
+                draft.gui.ttsProvider = value === 'xiaoai' ? undefined : value
               })
               onChange(newState)
             }}
@@ -75,7 +78,29 @@ export function Tts(props: {
             <option value="custom">自定义</option>
           </HTMLSelect>
         </FormGroup>
-        {config.tts?.provider === 'volcano' && (
+
+        {/* 只要不是小爱和自定义，就需要提供公网 IP 地址及端口 */}
+        {config.config.speaker.tts === 'custom' &&
+          config.gui?.ttsProvider !== 'custom' && (
+            <FormGroup label={'对外 IP 地址'} inline>
+              <InputGroup
+                required
+                value={config.gui?.publicIP || ''}
+                onValueChange={(newVal) => {
+                  const newState = produce(config, (draft) => {
+                    if (!draft.gui) {
+                      draft.gui = {}
+                    }
+                    draft.gui.publicIP = newVal === '' ? undefined : newVal
+                  })
+                  onChange(newState)
+                }}
+              />
+            </FormGroup>
+          )}
+
+        {/* 火山配置项 */}
+        {config.gui?.ttsProvider === 'volcano' && (
           <TTSVolcano
             value={config.tts}
             onChange={(value) => {
@@ -87,7 +112,8 @@ export function Tts(props: {
           />
         )}
 
-        {config.tts?.provider === 'custom' && (
+        {/* 自定义配置项 */}
+        {config.gui?.ttsProvider === 'custom' && (
           <>
             <FormGroup label={'TTS_BASE_URL'} inline>
               <InputGroup
@@ -96,9 +122,6 @@ export function Tts(props: {
                 value={config.env?.TTS_BASE_URL || ''}
                 onValueChange={(newVal) => {
                   const newState = produce(config, (draft) => {
-                    if (!draft.env) {
-                      draft.env = {}
-                    }
                     draft.env.TTS_BASE_URL = newVal
                   })
                   onChange(newState)
@@ -108,34 +131,14 @@ export function Tts(props: {
           </>
         )}
 
-        {/* 只要不是小爱和自定义，就需要提供公网 IP 地址 */}
-        {config.speaker.tts === 'custom' &&
-          config.tts?.provider !== 'custom' && (
-            <FormGroup label={'IP 地址'} inline>
-              <InputGroup
-                required
-                value={config.tts?.publicIP || ''}
-                onValueChange={(newVal) => {
-                  const newState = produce(config, (draft) => {
-                    if (!draft.tts) {
-                      draft.tts = {}
-                    }
-                    draft.tts.publicIP = newVal
-                  })
-                  onChange(newState)
-                }}
-              />
-            </FormGroup>
-          )}
-
         {/* 只要不是小爱，就能使用切换音色关键词 */}
-        {config.speaker.tts === 'custom' && (
+        {config.config.speaker.tts === 'custom' && (
           <FormGroup label={'切换音色关键词'} inline>
             <MultiInput
-              value={config.speaker.switchSpeakerKeywords}
+              value={config.config.speaker.switchSpeakerKeywords}
               onChange={(value) => {
                 const newState = produce(config, (draft) => {
-                  draft.speaker.switchSpeakerKeywords = value
+                  draft.config.speaker.switchSpeakerKeywords = value
                 })
 
                 onChange(newState)
@@ -155,9 +158,9 @@ export function Tts(props: {
               setTipTTS(value)
 
               // 切换回 default 时，如果配置过提示音效则清空
-              if (value === 'default' && config.env) {
+              if (value === 'default') {
                 const newState = produce(config, (draft) => {
-                  Object.assign(draft.env!, {
+                  Object.assign(draft.env, {
                     AUDIO_SILENT: undefined,
                     AUDIO_BEEP: undefined,
                     AUDIO_ACTIVE: undefined,
@@ -179,12 +182,9 @@ export function Tts(props: {
             <FormGroup label={'静音音频'} inline>
               <InputGroup
                 type={'url'}
-                value={config.env?.AUDIO_SILENT || ''}
+                value={config.env.AUDIO_SILENT || ''}
                 onValueChange={(newVal) => {
                   const newState = produce(config, (draft) => {
-                    if (!draft.env) {
-                      draft.env = {}
-                    }
                     draft.env.AUDIO_SILENT = newVal
                   })
                   onChange(newState)
@@ -195,12 +195,9 @@ export function Tts(props: {
             <FormGroup label={'默认提示音'} inline>
               <InputGroup
                 type={'url'}
-                value={config.env?.AUDIO_BEEP || ''}
+                value={config.env.AUDIO_BEEP || ''}
                 onValueChange={(newVal) => {
                   const newState = produce(config, (draft) => {
-                    if (!draft.env) {
-                      draft.env = {}
-                    }
                     draft.env.AUDIO_BEEP = newVal
                   })
                   onChange(newState)
@@ -211,12 +208,9 @@ export function Tts(props: {
             <FormGroup label={'唤醒提示音'} inline>
               <InputGroup
                 type={'url'}
-                value={config.env?.AUDIO_ACTIVE || ''}
+                value={config.env.AUDIO_ACTIVE || ''}
                 onValueChange={(newVal) => {
                   const newState = produce(config, (draft) => {
-                    if (!draft.env) {
-                      draft.env = {}
-                    }
                     draft.env.AUDIO_ACTIVE = newVal
                   })
                   onChange(newState)
@@ -227,12 +221,9 @@ export function Tts(props: {
             <FormGroup label={'出错提示音'} inline>
               <InputGroup
                 type={'url'}
-                value={config.env?.AUDIO_ERROR || ''}
+                value={config.env.AUDIO_ERROR || ''}
                 onValueChange={(newVal) => {
                   const newState = produce(config, (draft) => {
-                    if (!draft.env) {
-                      draft.env = {}
-                    }
                     draft.env.AUDIO_ERROR = newVal
                   })
                   onChange(newState)

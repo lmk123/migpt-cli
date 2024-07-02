@@ -1,13 +1,8 @@
 import { FormGroup, InputGroup } from '@blueprintjs/core'
 import { produce } from 'immer'
+import { type TTSConfig } from 'mi-gpt-tts'
 
-interface TTSVolcanoParams {
-  defaultSpeaker?: string
-  volcano?: {
-    appId?: string
-    accessToken?: string
-  }
-}
+type TTSVolcanoParams = Pick<TTSConfig, 'defaultSpeaker' | 'volcano'>
 
 interface TTSDouBaoProps {
   value?: TTSVolcanoParams
@@ -26,9 +21,12 @@ export function TTSVolcano(props: TTSDouBaoProps) {
             onChange(
               produce(value || {}, (draft) => {
                 if (!draft.volcano) {
-                  draft.volcano = {}
+                  draft.volcano = {
+                    appId: '',
+                    accessToken: '',
+                  }
                 }
-                draft.volcano.appId = val === '' ? undefined : val
+                draft.volcano.appId = val
               }),
             )
           }}
@@ -42,9 +40,12 @@ export function TTSVolcano(props: TTSDouBaoProps) {
             onChange(
               produce(value || {}, (draft) => {
                 if (!draft.volcano) {
-                  draft.volcano = {}
+                  draft.volcano = {
+                    appId: '',
+                    accessToken: '',
+                  }
                 }
-                draft.volcano.accessToken = val === '' ? undefined : val
+                draft.volcano.accessToken = val
               }),
             )
           }}
