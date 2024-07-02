@@ -1,6 +1,6 @@
 {
   "name": "@migptgui/server",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
@@ -24,7 +24,7 @@
     "dist"
   ],
   "dependencies": {
-    "@migptgui/controller": "^1.0.0",
+    "@migptgui/controller": "^1.1.0",
     "express": "^4.17.1",
     "fs-extra": "^11.2.0",
     "ip": "^2.0.1",
