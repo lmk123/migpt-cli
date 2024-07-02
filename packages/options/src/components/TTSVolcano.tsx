@@ -2,7 +2,7 @@ import { FormGroup, InputGroup } from '@blueprintjs/core'
 import { produce } from 'immer'
 import { type TTSConfig } from 'mi-gpt-tts'
 
-type TTSVolcanoParams = Pick<TTSConfig, 'defaultSpeaker' | 'volcano'>
+type TTSVolcanoParams = Pick<TTSConfig, 'volcano'>
 
 interface TTSDouBaoProps {
   value?: TTSVolcanoParams
@@ -46,19 +46,6 @@ export function TTSVolcano(props: TTSDouBaoProps) {
                   }
                 }
                 draft.volcano.accessToken = val
-              }),
-            )
-          }}
-        />
-      </FormGroup>
-      <FormGroup label={'音色'} inline>
-        <InputGroup
-          placeholder={'默认'}
-          value={value?.defaultSpeaker || ''}
-          onValueChange={(val) => {
-            onChange(
-              produce(value || {}, (draft) => {
-                draft.defaultSpeaker = val === '' ? undefined : val
               }),
             )
           }}

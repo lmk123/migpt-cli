@@ -26,7 +26,7 @@ interface TtsConfig {
     AUDIO_ERROR?: string
     TTS_BASE_URL?: string
   }
-  tts?: Pick<TTSConfig, 'defaultSpeaker' | 'volcano' | 'edge'>
+  tts?: TTSConfig
   gui?: {
     ttsProvider?: string
     publicIP?: string
@@ -64,7 +64,7 @@ export function Tts(props: {
             <option value="xiaoai">默认</option>
             <option value="volcano">火山（豆包）</option>
             <option value="edge">Edge 大声朗读</option>
-            {/*<option value="openai">OpenAI</option>*/}
+            <option value="openai">OpenAI</option>
             <option value="custom">自定义</option>
           </HTMLSelect>
           {/* 只要不是小爱，就提供说明 */}
@@ -114,28 +114,129 @@ export function Tts(props: {
 
         {/* edge 配置项*/}
         {config.gui?.ttsProvider === 'edge' && (
-          <FormGroup label={'密钥'} inline>
-            <InputGroup
-              required
-              value={config.tts?.edge?.trustedToken || ''}
-              onValueChange={(newVal) => {
-                const newState = produce(config, (draft) => {
-                  if (!draft.tts) {
-                    draft.tts = {}
-                  }
-                  if (draft.tts.edge) {
-                    draft.tts.edge.trustedToken = newVal
-                  } else {
-                    draft.tts.edge = {
-                      trustedToken: newVal,
+          <>
+            <FormGroup label={'Trusted Token'} inline>
+              <InputGroup
+                required
+                value={config.tts?.edge?.trustedToken || ''}
+                onValueChange={(newVal) => {
+                  const newState = produce(config, (draft) => {
+                    if (!draft.tts) {
+                      draft.tts = {}
                     }
-                  }
-                })
-                onChange(newState)
-              }}
-            />
-          </FormGroup>
+                    if (draft.tts.edge) {
+                      draft.tts.edge.trustedToken = newVal
+                    } else {
+                      draft.tts.edge = {
+                        trustedToken: newVal,
+                      }
+                    }
+                  })
+                  onChange(newState)
+                }}
+              />
+            </FormGroup>
+          </>
         )}
+
+        {/* openai 配置项*/}
+        {config.gui?.ttsProvider === 'openai' && (
+          <>
+            <FormGroup label={'密钥'} inline>
+              <InputGroup
+                required
+                value={config.tts?.openai?.apiKey || ''}
+                onValueChange={(newVal) => {
+                  const newState = produce(config, (draft) => {
+                    if (!draft.tts) {
+                      draft.tts = {}
+                    }
+                    if (draft.tts.openai) {
+                      draft.tts.openai.apiKey = newVal
+                    } else {
+                      draft.tts.openai = {
+                        apiKey: newVal,
+                      }
+                    }
+                  })
+                  onChange(newState)
+                }}
+              />
+            </FormGroup>
+            <FormGroup label={'模型'} inline>
+              <InputGroup
+                placeholder={'tts-1'}
+                value={config.tts?.openai?.model || ''}
+                onValueChange={(newVal) => {
+                  const newState = produce(config, (draft) => {
+                    if (!draft.tts) {
+                      draft.tts = {}
+                    }
+                    if (draft.tts.openai) {
+                      draft.tts.openai.model = newVal
+                    } else {
+                      draft.tts.openai = {
+                        apiKey: '',
+                        model: newVal,
+                      }
+                    }
+                  })
+                  onChange(newState)
+                }}
+              />
+            </FormGroup>
+            <FormGroup label={'接口地址'} inline>
+              <InputGroup
+                placeholder={'https://api.openai.com/v1'}
+                value={config.tts?.openai?.baseUrl || ''}
+                onValueChange={(newVal) => {
+                  const newState = produce(config, (draft) => {
+                    if (!draft.tts) {
+                      draft.tts = {}
+                    }
+                    if (draft.tts.openai) {
+                      draft.tts.openai.baseUrl = newVal
+                    } else {
+                      draft.tts.openai = {
+                        apiKey: '',
+                        baseUrl: newVal,
+                      }
+                    }
+                  })
+                  onChange(newState)
+                }}
+                rightElement={
+                  <span
+                    className={`tw-inline-block tw-h-[28px] tw-leading-[28px] tw-pr-2`}
+                  >
+                    /audio/speech
+                  </span>
+                }
+              />
+            </FormGroup>
+          </>
+        )}
+
+        {/* 只要不是小爱和自定义，就能配置音色 */}
+        {config.config.speaker.tts === 'custom' &&
+          config.gui?.ttsProvider !== 'custom' && (
+            <FormGroup label={'音色'} inline>
+              <InputGroup
+                placeholder={'默认'}
+                value={config.tts?.defaultSpeaker || ''}
+                onValueChange={(val) => {
+                  onChange(
+                    produce(config, (draft) => {
+                      if (!draft.tts) {
+                        draft.tts = {}
+                      }
+                      draft.tts.defaultSpeaker = val === '' ? undefined : val
+                    }),
+                  )
+                }}
+              />
+            </FormGroup>
+          )}
 
         {/* 自定义配置项 */}
         {config.gui?.ttsProvider === 'custom' && (
