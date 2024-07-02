@@ -29,3 +29,13 @@ export async function stop() {
   }
   throw new Error('Failed to stop：HTTP ' + response.statusText)
 }
+
+export async function reset() {
+  const response = await fetch('/api/default', {
+    method: 'DELETE',
+  })
+  if (response.ok) {
+    return response.json()
+  }
+  throw new Error('Failed to stop：HTTP ' + response.statusText)
+}

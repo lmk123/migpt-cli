@@ -1,12 +1,13 @@
-import * as path from 'node:path'
+import path from 'node:path'
 import express from 'express'
 import open from 'open'
-import * as os from 'node:os'
+import os from 'node:os'
 import { getStatus, type RunConfig, run, stop } from '@migptgui/controller'
+import fs from 'node:fs/promises'
 import fse from 'fs-extra'
 import { createTTS } from 'mi-gpt-tts'
 import { Readable } from 'node:stream'
-import * as ip from 'ip'
+import ip from 'ip'
 import { type GuiConfig } from '@migptgui/options'
 
 export function runServer(options?: {
@@ -35,6 +36,18 @@ export function runServer(options?: {
     res.json({ ip: ip.address('public') })
   })
 
+  // 删除机器人配置
+  app.delete('/api/default', (req, res) => {
+    fs.unlink(path.join(os.homedir(), '.migptgui/default/')).then(
+      () => {
+        res.json({ success: true })
+      },
+      (err) => {
+        res.json({ success: false, error: err })
+      },
+    )
+  })
+
   app.post('/api/start', async (req, res) => {
     const migptConfig = req.body as GuiConfig
 
@@ -44,7 +57,7 @@ export function runServer(options?: {
 
     // console.log('master: 收到 /api/start', migptConfig)
 
-    const cwd = path.join(os.tmpdir(), '.migpt/default/')
+    const cwd = path.join(os.homedir(), '.migpt/default/')
     await fse.ensureDir(cwd)
     await run(migptConfig as RunConfig, cwd)
 

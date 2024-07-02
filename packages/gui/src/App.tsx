@@ -9,6 +9,7 @@ import {
   Alignment,
   AnchorButton,
   Button,
+  ButtonGroup,
   FocusStyleManager,
   Navbar,
 } from '@blueprintjs/core'
@@ -29,55 +30,75 @@ export function App() {
           <Navbar.Heading>MiGPT 控制面板</Navbar.Heading>
           <Navbar.Divider />
           <div className={'tw-space-x-2'}>
-            <Button
-              icon={'play'}
-              onClick={() => {
-                if (!formEle) return
-                formEle.requestSubmit()
-              }}
-            >
-              启动
-            </Button>
-            <Button
-              icon={'stop'}
-              onClick={() => {
-                apis.stop().then(
-                  () => {
-                    alert('停止成功！')
-                  },
-                  (err) => {
-                    alert('停止失败！' + err)
-                  },
-                )
-              }}
-            >
-              停止
-            </Button>
-            <Button
-              icon={'import'}
-              onClick={() => {
-                importJSON().then((json) => {
-                  setConfig(json as any)
-                })
-              }}
-            >
-              导入
-            </Button>
-            <Button
-              icon={'export'}
-              onClick={() => {
-                exportJSON(strip(config), 'migptgui.json')
-              }}
-            >
-              导出
-            </Button>
-            <AnchorButton
-              href={'https://migptgui.com/docs/options/'}
-              intent={'primary'}
-              target={'_blank'}
-            >
-              配置项详解
-            </AnchorButton>
+            <ButtonGroup>
+              <Button
+                icon={'play'}
+                onClick={() => {
+                  if (!formEle) return
+                  formEle.requestSubmit()
+                }}
+              >
+                启动
+              </Button>
+              <Button
+                icon={'stop'}
+                onClick={() => {
+                  apis.stop().then(
+                    () => {
+                      alert('停止成功！')
+                    },
+                    (err) => {
+                      alert('停止失败！' + err)
+                    },
+                  )
+                }}
+              >
+                停止
+              </Button>
+              <Button
+                icon={'reset'}
+                onClick={() => {
+                  apis.reset().then(
+                    () => {
+                      alert('重置成功！')
+                    },
+                    (err) => {
+                      alert('重置失败！' + err)
+                    },
+                  )
+                }}
+              >
+                重置
+              </Button>
+            </ButtonGroup>
+            <ButtonGroup>
+              <Button
+                icon={'import'}
+                onClick={() => {
+                  importJSON().then((json) => {
+                    setConfig(json as any)
+                  })
+                }}
+              >
+                导入
+              </Button>
+              <Button
+                icon={'export'}
+                onClick={() => {
+                  exportJSON(strip(config), 'migptgui.json')
+                }}
+              >
+                导出
+              </Button>
+              <AnchorButton
+                icon={'document'}
+                href={'https://migptgui.com/docs/options/'}
+                intent={'primary'}
+                target={'_blank'}
+              >
+                配置项详解
+              </AnchorButton>
+            </ButtonGroup>
           </div>
         </Navbar.Group>
       </Navbar>
