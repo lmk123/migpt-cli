@@ -26,7 +26,7 @@ interface TtsConfig {
     AUDIO_ERROR?: string
     TTS_BASE_URL?: string
   }
-  tts?: Pick<TTSConfig, 'defaultSpeaker' | 'volcano'>
+  tts?: Pick<TTSConfig, 'defaultSpeaker' | 'volcano' | 'edge'>
   gui?: {
     ttsProvider?: string
     publicIP?: string
@@ -63,7 +63,7 @@ export function Tts(props: {
           >
             <option value="xiaoai">默认</option>
             <option value="volcano">火山（豆包）</option>
-            {/*<option value="edge">Edge 大声朗读</option>*/}
+            <option value="edge">Edge 大声朗读</option>
             {/*<option value="openai">OpenAI</option>*/}
             <option value="custom">自定义</option>
           </HTMLSelect>
@@ -110,6 +110,31 @@ export function Tts(props: {
               onChange(newState)
             }}
           />
+        )}
+
+        {/* edge 配置项*/}
+        {config.gui?.ttsProvider === 'edge' && (
+          <FormGroup label={'密钥'} inline>
+            <InputGroup
+              required
+              value={config.tts?.edge?.trustedToken || ''}
+              onValueChange={(newVal) => {
+                const newState = produce(config, (draft) => {
+                  if (!draft.tts) {
+                    draft.tts = {}
+                  }
+                  if (draft.tts.edge) {
+                    draft.tts.edge.trustedToken = newVal
+                  } else {
+                    draft.tts.edge = {
+                      trustedToken: newVal,
+                    }
+                  }
+                })
+                onChange(newState)
+              }}
+            />
+          </FormGroup>
         )}
 
         {/* 自定义配置项 */}
