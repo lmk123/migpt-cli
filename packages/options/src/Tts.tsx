@@ -1,4 +1,5 @@
 import {
+  Button,
   Card,
   FormGroup,
   HTMLSelect,
@@ -11,6 +12,7 @@ import { MultiInput } from './components/MultiInput.js'
 import { useState } from 'react'
 import { type TTSConfig } from 'mi-gpt-tts'
 import { TTSVolcano } from './components/TTSVolcano.js'
+import { isLocalhost, ping } from './utils.js'
 
 interface TtsConfig {
   config: {
@@ -29,8 +31,7 @@ interface TtsConfig {
   tts?: TTSConfig
   gui?: {
     ttsProvider?: string
-    publicIP?: string
-    port?: number
+    publicURL?: string
   }
 }
 
@@ -82,19 +83,44 @@ export function Tts(props: {
         {/* 只要不是小爱和自定义，就需要提供公网 IP 地址及端口 */}
         {config.config.speaker.tts === 'custom' &&
           config.gui?.ttsProvider !== 'custom' && (
-            <FormGroup label={'对外 IP 地址'} inline>
+            <FormGroup label={'对外地址'} inline>
               <InputGroup
                 required
-                value={config.gui?.publicIP || ''}
+                type={'url'}
+                value={config.gui?.publicURL || ''}
                 onValueChange={(newVal) => {
                   const newState = produce(config, (draft) => {
                     if (!draft.gui) {
                       draft.gui = {}
                     }
-                    draft.gui.publicIP = newVal === '' ? undefined : newVal
+                    draft.gui.publicURL = newVal === '' ? undefined : newVal
                   })
                   onChange(newState)
                 }}
+                rightElement={
+                  <Button
+                    onClick={() => {
+                      const url = config.gui?.publicURL
+                      if (!url) {
+                        alert('请先填写对外地址')
+                        return
+                      }
+                      if (isLocalhost(url)) {
+                        alert('不能使用本地地址')
+                        return
+                      }
+                      ping(url).then((ok) => {
+                        alert(
+                          ok
+                            ? '可以成功连接 migpt-server'
+                            : '连接 migpt-server 失败，请确认地址是否正确',
+                        )
+                      })
+                    }}
+                  >
+                    检测
+                  </Button>
+                }
               />
             </FormGroup>
           )}

@@ -1,7 +1,13 @@
 import { type GuiConfig } from './type.js'
 import { produce } from 'immer'
 import _isEmpty from 'lodash/isEmpty.js'
+import _trimEnd from 'lodash/trimEnd.js'
 
+/**
+ * 导出 JSON 配置
+ * @param config
+ * @param name
+ */
 export function exportJSON(config: object, name = 'data.json') {
   // 将 JSON 数据转换为字符串
   const jsonString = JSON.stringify(config, null, 2)
@@ -99,26 +105,54 @@ function clean(obj: any) {
 
 function getPort() {
   const port = location.port
-  return port ? parseInt(port) : location.protocol === 'https:' ? 443 : 80
+  return port ? parseInt(port, 10) : location.protocol === 'https:' ? 443 : 80
 }
 
 /**
- * 对 packages/options 中的配置进行规范化
+ * 对配置进行规范化
  * @param config
  */
 export function normalize(config: GuiConfig) {
   return produce(config, (draft) => {
-    // 删除 null / undefined / 空对象 / 数组中的空字符串
-    clean(draft)
-    // 以浏览器地址栏里的端口号为准，例如通过 docker 部署的人可能会更改映射到主机的端口号
-    if (!draft.gui) {
-      draft.gui = {}
+    if (draft.gui) {
+      // 以前的版本中的 publicIP 和 port 改为 publicURL
+      if (!draft.gui.publicURL && draft.gui.publicIP) {
+        draft.gui.publicURL = `http://${draft.gui.publicIP}:${draft.gui.port || getPort()}`
+      }
+      delete draft.gui.publicIP
+      delete draft.gui.port
     }
-    draft.gui.port = getPort()
   })
 }
 
 /**
- * @deprecated 请使用 `normalize()`
+ * 删掉配置中的空配置如 null / undefined / 空对象 / 数组中的空字符串
+ *
+ * 仅当在需要展示配置给用户看的时候使用
+ *
+ * @param config
  */
-export const strip = normalize
+export function strip(config: GuiConfig) {
+  return produce(config, (draft) => {
+    // 删除 null / undefined / 空对象 / 数组中的空字符串
+    clean(draft)
+  })
+}
+
+/**
+ * 判断是否是本地地址
+ * @param url
+ */
+export function isLocalhost(url: string) {
+  return url.includes('localhost') || url.includes('127.0.0.1')
+}
+
+/**
+ * 用于检测用户填写的对外服务地址是否正确
+ * @param url
+ */
+export async function ping(url: string) {
+  const realUrl = _trimEnd(url, '/') + '/ping'
+  const response = await fetch(realUrl)
+  return response.ok
+}

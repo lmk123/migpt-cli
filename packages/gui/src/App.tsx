@@ -3,7 +3,9 @@ import {
   defaults,
   exportJSON,
   importJSON,
+  strip,
   normalize,
+  type GuiConfig,
 } from '@migptgui/options'
 import {
   Alignment,
@@ -38,7 +40,7 @@ export function App() {
   // 保存配置
   useEffect(() => {
     if (config !== defaults) {
-      saveConfigDebounced(normalize(config))
+      saveConfigDebounced(config)
     }
   }, [config])
 
@@ -102,7 +104,7 @@ export function App() {
                 icon={'import'}
                 onClick={() => {
                   importJSON().then((json) => {
-                    setConfig(json as any)
+                    setConfig(normalize(json as GuiConfig))
                   })
                 }}
               >
@@ -111,7 +113,7 @@ export function App() {
               <Button
                 icon={'export'}
                 onClick={() => {
-                  exportJSON(normalize(config), 'migptgui.json')
+                  exportJSON(strip(config), 'migptgui.json')
                 }}
               >
                 导出
@@ -137,7 +139,7 @@ export function App() {
             ref={setFormEle}
             onSubmit={(event) => {
               event.preventDefault()
-              apis.run(normalize(config)).then(
+              apis.run(config).then(
                 () => {
                   alert('启动成功！你可以切换回终端内查看运行日志。')
                 },
