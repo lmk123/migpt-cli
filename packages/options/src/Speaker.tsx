@@ -175,7 +175,6 @@ export function Speaker(props: {
           helperText={isSpeakerSelected ? '已根据你选择的型号自动填写。' : ''}
         >
           <LotCommand
-            disabled={isSpeakerSelected}
             required
             value={config.config.speaker.ttsCommand}
             count={2}
@@ -193,7 +192,6 @@ export function Speaker(props: {
           helperText={isSpeakerSelected ? '已根据你选择的型号自动填写。' : ''}
         >
           <LotCommand
-            disabled={isSpeakerSelected}
             required
             value={config.config.speaker.wakeUpCommand}
             count={2}
@@ -211,7 +209,6 @@ export function Speaker(props: {
           helperText={isSpeakerSelected ? '已根据你选择的型号自动填写。' : ''}
         >
           <LotCommand
-            disabled={isSpeakerSelected}
             value={config.config.speaker.playingCommand}
             count={3}
             onChange={(value) => {
@@ -262,7 +259,6 @@ export function Speaker(props: {
           inline
         >
           <Checkbox
-            disabled={isSpeakerSelected}
             checked={
               config.config.speaker.streamResponse == null
                 ? true
