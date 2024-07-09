@@ -7,10 +7,12 @@ import fse from 'fs-extra'
 import fs from 'node:fs/promises'
 import { createTTS } from 'mi-gpt-tts'
 import { Readable } from 'node:stream'
-import ip from 'ip'
+// import ip from 'ip'
 import { type GuiConfig } from '@migptgui/options'
 import baseAuth from 'express-basic-auth'
 import { nanoid } from 'nanoid'
+import cors from 'cors'
+import _trimEnd from 'lodash/trimEnd.js'
 
 export function runServer(options?: {
   open?: boolean
@@ -36,6 +38,11 @@ export function runServer(options?: {
   }
 
   const app = express()
+
+  // 用于测试用户填写的对外地址是否正确
+  app.get('/ping', cors(), (req, res) => {
+    res.status(204).send()
+  })
 
   // 小爱音箱会通过这个接口获取语音合成的音频，所以不能给它加 basicAuth
   app.get(ttsPath, (req, res) => {
@@ -84,9 +91,9 @@ export function runServer(options?: {
   })
 
   // 在自己运行 tts 服务时需要有一个局域网或公网 IP 地址给小爱音箱来访问下面的 /tts/tts.mp3 接口
-  app.get('/api/myip', (req, res) => {
-    res.json({ ip: ip.address('public') })
-  })
+  // app.get('/api/myip', (req, res) => {
+  //   res.json({ ip: ip.address('public') })
+  // })
 
   app.get('/api/default', async (req, res) => {
     let migptConfig: GuiConfig | undefined
@@ -132,6 +139,7 @@ export function runServer(options?: {
     )
   })
 
+  // 启动 MiGPT
   app.post('/api/default/start', async (req, res) => {
     const migptConfig = req.body as GuiConfig
 
@@ -145,7 +153,7 @@ export function runServer(options?: {
       migptConfig.tts
     ) {
       tts = createTTS(migptConfig.tts)
-      migptConfig.env.TTS_BASE_URL = `http://${migptConfig.gui.publicIP}:${migptConfig.gui.port || port}${ttsSecretPath}/tts`
+      migptConfig.env.TTS_BASE_URL = `${_trimEnd(migptConfig.gui.publicURL, '/')}${ttsSecretPath}/tts`
       // console.log('内建 TTS 服务地址：', migptConfig.env.TTS_BASE_URL)
     }
 

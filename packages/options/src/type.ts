@@ -48,12 +48,20 @@ export interface GuiConfig {
     ttsProvider?: string
     /**
      * 运行 migpt-server 的设备的局域网或公网 IP 地址
+     *
+     * @deprecated 请使用 `publicURL` 代替
      */
     publicIP?: string
     /**
      * 端口号
+     *
+     * @deprecated 请使用 `publicURL` 代替
      */
     port?: number
+    /**
+     * 运行 migpt-server 的设备的对外地址
+     */
+    publicURL?: string
     /**
      * 小爱音箱的型号，比如 "小米 AI 音箱（第二代）"
      */
