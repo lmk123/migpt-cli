@@ -62,8 +62,8 @@ export function Tts(props: {
             }}
           >
             <option value="xiaoai">默认</option>
-            <option value="volcano">火山（豆包）</option>
             <option value="edge">Edge 大声朗读</option>
+            <option value="volcano">火山（豆包）</option>
             <option value="openai">OpenAI</option>
             <option value="custom">自定义</option>
           </HTMLSelect>
