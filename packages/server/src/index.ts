@@ -12,6 +12,7 @@ import { type GuiConfig } from '@migptgui/options'
 import baseAuth from 'express-basic-auth'
 import { nanoid } from 'nanoid'
 import cors from 'cors'
+import _trimEnd from 'lodash/trimEnd.js'
 
 export function runServer(options?: {
   open?: boolean
@@ -152,7 +153,7 @@ export function runServer(options?: {
       migptConfig.tts
     ) {
       tts = createTTS(migptConfig.tts)
-      migptConfig.env.TTS_BASE_URL = `${migptConfig.gui.publicURL}${ttsSecretPath}/tts`
+      migptConfig.env.TTS_BASE_URL = `${_trimEnd(migptConfig.gui.publicURL, '/')}${ttsSecretPath}/tts`
       // console.log('内建 TTS 服务地址：', migptConfig.env.TTS_BASE_URL)
     }
 
