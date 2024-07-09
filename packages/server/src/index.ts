@@ -4,6 +4,7 @@ import open from 'open'
 import os from 'node:os'
 import { getStatus, type RunConfig, run, stop } from '@migptgui/controller'
 import fse from 'fs-extra'
+import fs from 'node:fs/promises'
 import { createTTS } from 'mi-gpt-tts'
 import { Readable } from 'node:stream'
 import ip from 'ip'
@@ -19,10 +20,20 @@ export function runServer(options?: {
 }) {
   const port = options?.port || 36592
 
+  const defaultBotCwd = path.join(os.homedir(), '.migptgui/default/')
+
   const isAuth = !!options?.users
   const ttsSecret = nanoid()
   const ttsSecretPath = '/' + ttsSecret
   const ttsPath = ttsSecretPath + '/tts/tts.mp3'
+
+  async function saveConfig(config: GuiConfig) {
+    await fse.ensureDir(defaultBotCwd)
+    return fs.writeFile(
+      path.join(os.homedir(), '.migptgui/default/migptgui.json'),
+      JSON.stringify(config),
+    )
+  }
 
   const app = express()
 
@@ -77,12 +88,41 @@ export function runServer(options?: {
     res.json({ ip: ip.address('public') })
   })
 
-  const defaultBotCwd = path.join(os.homedir(), '.migptgui/default/')
+  app.get('/api/default', async (req, res) => {
+    let migptConfig: GuiConfig | undefined
 
-  // 删除机器人配置
+    try {
+      const migptConfigStr = await fs.readFile(
+        path.join(defaultBotCwd, 'migptgui.json'),
+        'utf-8',
+      )
+      migptConfig = JSON.parse(migptConfigStr)
+    } catch (e) {
+      // console.log('master: 读取默认配置文件失败：', e)
+    }
+    if (migptConfig) {
+      res.json({
+        config: migptConfig,
+      })
+    } else {
+      res.json({})
+    }
+  })
+
+  // 保存配置
+  app.put('/api/default', async (req, res) => {
+    const migptConfig = req.body as GuiConfig
+    await saveConfig(migptConfig)
+    res.json({ success: true })
+  })
+
+  // 删除 .mi.json 和 .bot.json
   app.delete('/api/default', (req, res) => {
     // console.log('准备删除路径：', path.join(os.homedir(), '.migptgui/default/'))
-    fse.remove(defaultBotCwd).then(
+    Promise.all([
+      fse.remove(path.join(defaultBotCwd, '.mi.json')),
+      fse.remove(path.join(defaultBotCwd, '.bot.json')),
+    ]).then(
       () => {
         res.json({ success: true })
       },
@@ -92,8 +132,10 @@ export function runServer(options?: {
     )
   })
 
-  app.post('/api/start', async (req, res) => {
+  app.post('/api/default/start', async (req, res) => {
     const migptConfig = req.body as GuiConfig
+
+    await saveConfig(migptConfig)
 
     // 如果使用了内置的 TTS 服务
     if (
@@ -109,13 +151,12 @@ export function runServer(options?: {
 
     // console.log('master: 收到 /api/start', migptConfig)
 
-    await fse.ensureDir(defaultBotCwd)
     await run(migptConfig as RunConfig, defaultBotCwd)
 
     res.json({ success: true })
   })
 
-  app.post('/api/stop', async (req, res) => {
+  app.post('/api/default/stop', async (req, res) => {
     // console.log('master: 收到 /api/stop')
 
     await stop()
