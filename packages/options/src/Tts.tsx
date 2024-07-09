@@ -109,13 +109,18 @@ export function Tts(props: {
                         alert('不能使用本地地址')
                         return
                       }
-                      ping(url).then((ok) => {
-                        alert(
-                          ok
-                            ? '可以成功连接 migpt-server'
-                            : '连接 migpt-server 失败，请确认地址是否正确',
-                        )
-                      })
+                      ping(url).then(
+                        (ok) => {
+                          alert(
+                            ok
+                              ? '可以成功连接 migpt-server'
+                              : '连接 migpt-server 失败，请确认地址是否正确',
+                          )
+                        },
+                        () => {
+                          alert('连接 migpt-server 失败，请确认地址是否正确')
+                        },
+                      )
                     }}
                   >
                     检测
