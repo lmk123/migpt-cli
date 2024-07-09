@@ -3,7 +3,7 @@ import {
   defaults,
   exportJSON,
   importJSON,
-  strip,
+  normalize,
 } from '@migptgui/options'
 import {
   Alignment,
@@ -13,8 +13,11 @@ import {
   FocusStyleManager,
   Navbar,
 } from '@blueprintjs/core'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import * as apis from './apis.ts'
+import _debounce from 'lodash/debounce.js'
+
+const saveConfigDebounced = _debounce(apis.saveConfig, 1000)
 
 FocusStyleManager.onlyShowFocusOnTabs()
 
@@ -22,6 +25,22 @@ export function App() {
   const [config, setConfig] = useState(defaults)
 
   const [formEle, setFormEle] = useState<HTMLFormElement | null>()
+
+  // 读取配置
+  useEffect(() => {
+    apis.getConfig().then((config) => {
+      if (config) {
+        setConfig(config)
+      }
+    })
+  }, [])
+
+  // 保存配置
+  useEffect(() => {
+    if (config !== defaults) {
+      saveConfigDebounced(normalize(config))
+    }
+  }, [config])
 
   return (
     <>
@@ -92,7 +111,7 @@ export function App() {
               <Button
                 icon={'export'}
                 onClick={() => {
-                  exportJSON(strip(config), 'migptgui.json')
+                  exportJSON(normalize(config), 'migptgui.json')
                 }}
               >
                 导出
@@ -118,7 +137,7 @@ export function App() {
             ref={setFormEle}
             onSubmit={(event) => {
               event.preventDefault()
-              apis.run(strip(config)).then(
+              apis.run(normalize(config)).then(
                 () => {
                   alert('启动成功！你可以切换回终端内查看运行日志。')
                 },
