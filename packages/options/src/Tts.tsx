@@ -252,6 +252,15 @@ export function Tts(props: {
                   })
                   onChange(newState)
                 }}
+                rightElement={
+                  <span
+                    className={
+                      'tw-inline-block tw-h-[28px] tw-leading-[28px] tw-pr-2'
+                    }
+                  >
+                    /tts.mp3
+                  </span>
+                }
               />
             </FormGroup>
           </>
