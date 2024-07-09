@@ -126,6 +126,7 @@ export function runServer(options?: {
   app.listen(port, () => {
     console.log('端口：', port)
     console.log('登录认证：', isAuth ? '已启用' : '未启用')
+    console.log('秘密路径：', '已启用')
     if (options?.open) {
       open(`http://localhost:${port}`)
     }
