@@ -23,6 +23,8 @@ export function runServer(options?: {
 
   const defaultBotCwd = path.join(os.homedir(), '.migptgui/default/')
 
+  let guiConfigRunning: GuiConfig | undefined
+
   const isAuth = !!options?.users
   const ttsSecret = nanoid()
   const ttsSecretPath = '/' + ttsSecret
@@ -46,10 +48,14 @@ export function runServer(options?: {
   // 小爱音箱会通过这个接口获取语音合成的音频，所以不能给它加 basicAuth
   app.get(ttsPath, (req, res) => {
     // console.log('进入秘密路径的 /tts/tts.mp3')
-    if (!tts) {
-      res.status(500).send('TTS not initialized')
+
+    // 没有启动 MiGPT，或者没有配置过 tts
+    if (!guiConfigRunning || !guiConfigRunning.tts) {
+      res.status(500).send('Internal Server Error')
       return
     }
+
+    const tts = createTTS(guiConfigRunning.tts)
 
     const options: Record<string, unknown> = {}
     const nUrl = req.url.replace('+text=', '&text=') // 修正请求 URL
@@ -65,8 +71,12 @@ export function runServer(options?: {
 
     // console.log('master: 开始合成语音。配置：', options)
 
-    tts(options)
-      // 错误处理的代码是复制的 '/api/test/audio' 接口里的
+    tts({
+      ...options,
+      // 指定 speaker 的原因见 `/api/test/audio` 接口的注释
+      speaker: guiConfigRunning.tts.defaultSpeaker,
+    })
+      // 错误处理的代码是复制的 `/api/test/audio` 接口里的
       .then((buffer) => {
         if (!buffer) {
           // 没有填写配置的时候，会走到这里面来
@@ -120,8 +130,6 @@ export function runServer(options?: {
   if (options?.staticPath) {
     app.use(express.static(options.staticPath))
   }
-
-  let tts: ReturnType<typeof createTTS>
 
   app.get('/api/status', async (req, res) => {
     res.json(getStatus())
@@ -293,7 +301,6 @@ export function runServer(options?: {
       migptConfig.gui.ttsProvider !== 'custom' &&
       migptConfig.tts
     ) {
-      tts = createTTS(migptConfig.tts)
       migptConfig.env.TTS_BASE_URL = `${_trimEnd(migptConfig.gui.publicURL, '/')}${ttsSecretPath}/tts`
       // console.log(
       //   '内建 TTS 服务地址：',
@@ -302,6 +309,8 @@ export function runServer(options?: {
     }
 
     // console.log('master: 收到 /api/start', migptConfig)
+
+    guiConfigRunning = migptConfig
 
     await run(migptConfig as RunConfig, defaultBotCwd)
 
