@@ -11,7 +11,6 @@ import { Readable } from 'node:stream'
 import { type GuiConfig } from '@migptgui/options'
 import baseAuth from 'express-basic-auth'
 import { nanoid } from 'nanoid'
-import cors from 'cors'
 import _trimEnd from 'lodash/trimEnd.js'
 
 export function runServer(options?: {
@@ -40,7 +39,7 @@ export function runServer(options?: {
   const app = express()
 
   // 用于测试用户填写的对外地址是否正确
-  app.get('/ping', cors(), (req, res) => {
+  app.post('/ping', (req, res) => {
     res.status(204).send()
   })
 
@@ -92,11 +91,36 @@ export function runServer(options?: {
     res.json(getStatus())
   })
 
+  // 测试对外地址是否能连通
+  app.post('/api/test', async (req, res) => {
+    const testBaseUrl = req.body.url
+    // console.log('测试地址：', _trimEnd(testBaseUrl, '/') + '/ping')
+    try {
+      const fetchRes = await fetch(_trimEnd(testBaseUrl, '/') + '/ping', {
+        method: 'POST',
+      })
+      if (fetchRes.ok) {
+        res.json({
+          success: true,
+        })
+      } else {
+        res.json({
+          success: false,
+        })
+      }
+    } catch (e) {
+      res.json({
+        success: false,
+      })
+    }
+  })
+
   // 在自己运行 tts 服务时需要有一个局域网或公网 IP 地址给小爱音箱来访问下面的 /tts/tts.mp3 接口
   // app.get('/api/myip', (req, res) => {
   //   res.json({ ip: ip.address('public') })
   // })
 
+  // 读取配置
   app.get('/api/default', async (req, res) => {
     let migptConfig: GuiConfig | undefined
 

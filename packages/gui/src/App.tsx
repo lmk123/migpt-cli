@@ -155,6 +155,20 @@ export function App() {
                 // console.log('config and stripped config', config, strip(config))
                 setConfig(config)
               }}
+              onPublicURLTest={(url) => {
+                apis.testPublicURL(url).then(
+                  (res) => {
+                    if (res.success) {
+                      alert('测试成功。')
+                    } else {
+                      alert('测试失败。')
+                    }
+                  },
+                  (err) => {
+                    alert('测试失败。' + err)
+                  },
+                )
+              }}
             />
           </form>
         </main>

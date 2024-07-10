@@ -1,7 +1,6 @@
 import { type GuiConfig } from './type.js'
 import { produce } from 'immer'
 import _isEmpty from 'lodash/isEmpty.js'
-import _trimEnd from 'lodash/trimEnd.js'
 
 /**
  * 导出 JSON 配置
@@ -145,14 +144,4 @@ export function strip(config: GuiConfig) {
  */
 export function isLocalhost(url: string) {
   return url.includes('localhost') || url.includes('127.0.0.1')
-}
-
-/**
- * 用于检测用户填写的对外服务地址是否正确
- * @param url
- */
-export async function ping(url: string) {
-  const realUrl = _trimEnd(url, '/') + '/ping'
-  const response = await fetch(realUrl)
-  return response.ok
 }

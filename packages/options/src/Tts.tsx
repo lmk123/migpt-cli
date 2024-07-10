@@ -12,7 +12,7 @@ import { MultiInput } from './components/MultiInput.js'
 import { useState } from 'react'
 import { type TTSConfig } from 'mi-gpt-tts'
 import { TTSVolcano } from './components/TTSVolcano.js'
-import { isLocalhost, ping } from './utils.js'
+import { isLocalhost } from './utils.js'
 
 interface TtsConfig {
   config: {
@@ -38,6 +38,7 @@ interface TtsConfig {
 export function Tts(props: {
   config: TtsConfig
   onChange: (config: TtsConfig) => void
+  onPublicURLTest?: (url: string) => void
 }) {
   const { config, onChange } = props
 
@@ -109,18 +110,13 @@ export function Tts(props: {
                         alert('不能使用本地地址')
                         return
                       }
-                      ping(url).then(
-                        (ok) => {
-                          alert(
-                            ok
-                              ? '可以成功连接 migpt-server'
-                              : '连接 migpt-server 失败，请确认地址是否正确',
-                          )
-                        },
-                        () => {
-                          alert('连接 migpt-server 失败，请确认地址是否正确')
-                        },
-                      )
+                      if (props.onPublicURLTest) {
+                        props.onPublicURLTest(url)
+                      } else {
+                        alert(
+                          '在使用 migpt-server 时才支持检测对外地址是否可用',
+                        )
+                      }
                     }}
                   >
                     检测
