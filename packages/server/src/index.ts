@@ -139,14 +139,57 @@ export function runServer(options?: {
       // 那么之后所有的朗读都会使用 edge，如果我在这之后把 defaultSpeaker 切换为了 volcano 的“灿灿”，它仍然是用 edge 的“云希”朗读的。
       // 为了解决这个问题，需要每次调用都指定下面的 speaker，这个可以强制要求 mi-gpt-tts 使用指定的 speaker。
       speaker: options.defaultSpeaker,
+    }).then((buffer) => {
+      if (!buffer) {
+        // 没有填写配置的时候，会走到这里面来
+        audioStream.destroy(new Error('没有把配置填写完整'))
+      }
     })
 
-    res.writeHead(200, {
-      'Transfer-Encoding': 'chunked',
-      'Content-Type': 'audio/mp3',
+    let headersSent = false
+
+    audioStream.on('data', (chunk) => {
+      // console.log('data 事件数据长度：', chunk.length)
+
+      // 如果填写了配置但是填写的不对，则第一次会推送过来一个 404
+      // __但奇怪的是我没有在 mi-gpt-tts 里找到这个 404 的推送，先不管了__
+      // 破案了。
+      // npm 上发布的是 v2.0.0 的 mi-gpt-tts，当时它推送的确实是 "404"，见
+      // https://github.com/idootop/mi-gpt-tts/blob/v2.0.0/src/common/stream.ts#L30
+      // github 上现在是 v3.0.0 的，它给改成 "error" 了，见
+      // https://github.com/idootop/mi-gpt-tts/blob/v3.0.0/src/common/stream.ts#L30
+      if (
+        (chunk.length === 3 && chunk.toString('utf8') === '404') ||
+        (chunk.length === 5 && chunk.toString('utf8') === 'error')
+      ) {
+        audioStream.destroy(new Error('配置填写有误'))
+        return
+      }
+
+      // 到了这里才可以确保这次是正常响应了
+      if (!headersSent) {
+        res.writeHead(200, {
+          'Transfer-Encoding': 'chunked',
+          'Content-Type': 'audio/mp3',
+        })
+        headersSent = true
+      }
+
+      // 流式响应数据
+      res.write(chunk)
     })
 
-    audioStream.pipe(res)
+    audioStream.on('end', () => {
+      res.end()
+    })
+
+    audioStream.once('error', (error) => {
+      if (!headersSent) {
+        res.status(500).send(error.message || 'Internal Server Error')
+      } else {
+        res.end()
+      }
+    })
   })
 
   // 在自己运行 tts 服务时需要有一个局域网或公网 IP 地址给小爱音箱来访问下面的 /tts/tts.mp3 接口
