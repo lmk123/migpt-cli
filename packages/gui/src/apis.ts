@@ -30,7 +30,9 @@ export async function testTts(ttsConfig: TTSConfig) {
     '/api/test/audio?ttsConfig=' + encodeURIComponent(JSON.stringify(ttsConfig))
   const audio = new Audio(audioUrl)
   return new Promise<void>((resolve, reject) => {
-    audio.addEventListener('error', reject)
+    audio.addEventListener('error', () => {
+      reject()
+    })
     audio.addEventListener('canplay', () => {
       resolve()
       audio.play()
