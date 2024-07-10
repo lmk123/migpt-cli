@@ -46,7 +46,7 @@ export function runServer(options?: {
 
   // 小爱音箱会通过这个接口获取语音合成的音频，所以不能给它加 basicAuth
   app.get(ttsPath, (req, res) => {
-    // console.log('master: 进入 /tts/tts.mp3')
+    // console.log('进入秘密路径的 /tts/tts.mp3')
     if (!tts) {
       res.status(500).send('TTS not initialized')
       return
@@ -58,6 +58,8 @@ export function runServer(options?: {
     for (const [key, value] of url.searchParams.entries()) {
       options[key] = value
     }
+
+    // console.log('准备合成语音。参数：', options)
 
     const audioStream = new Readable({ read() {} })
     options.stream = audioStream
@@ -154,7 +156,10 @@ export function runServer(options?: {
     ) {
       tts = createTTS(migptConfig.tts)
       migptConfig.env.TTS_BASE_URL = `${_trimEnd(migptConfig.gui.publicURL, '/')}${ttsSecretPath}/tts`
-      // console.log('内建 TTS 服务地址：', migptConfig.env.TTS_BASE_URL)
+      // console.log(
+      //   '内建 TTS 服务地址：',
+      //   migptConfig.env.TTS_BASE_URL + '/tts.mp3',
+      // )
     }
 
     // console.log('master: 收到 /api/start', migptConfig)
