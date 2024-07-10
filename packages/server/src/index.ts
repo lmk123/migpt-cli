@@ -66,13 +66,49 @@ export function runServer(options?: {
     // console.log('master: 开始合成语音。配置：', options)
 
     tts(options)
+      // 错误处理的代码是复制的 '/api/test/audio' 接口里的
+      .then((buffer) => {
+        if (!buffer) {
+          // 没有填写配置的时候，会走到这里面来
+          audioStream.destroy(new Error('没有把配置填写完整'))
+        }
+      })
 
-    res.writeHead(200, {
-      'Transfer-Encoding': 'chunked',
-      'Content-Type': 'audio/mp3',
+    let headersSent = false
+
+    audioStream.on('data', (chunk) => {
+      if (
+        (chunk.length === 3 && chunk.toString('utf8') === '404') ||
+        (chunk.length === 5 && chunk.toString('utf8') === 'error')
+      ) {
+        audioStream.destroy(new Error('配置填写有误'))
+        return
+      }
+
+      // 到了这里才可以确保这次是正常响应了
+      if (!headersSent) {
+        res.writeHead(200, {
+          'Transfer-Encoding': 'chunked',
+          'Content-Type': 'audio/mp3',
+        })
+        headersSent = true
+      }
+
+      // 流式响应数据
+      res.write(chunk)
     })
 
-    audioStream.pipe(res)
+    audioStream.on('end', () => {
+      res.end()
+    })
+
+    audioStream.once('error', (error) => {
+      if (!headersSent) {
+        res.status(400).send(error.message || 'Internal Server Error')
+      } else {
+        res.end()
+      }
+    })
   })
 
   app.use(express.json())
@@ -139,12 +175,14 @@ export function runServer(options?: {
       // 那么之后所有的朗读都会使用 edge，如果我在这之后把 defaultSpeaker 切换为了 volcano 的“灿灿”，它仍然是用 edge 的“云希”朗读的。
       // 为了解决这个问题，需要每次调用都指定下面的 speaker，这个可以强制要求 mi-gpt-tts 使用指定的 speaker。
       speaker: options.defaultSpeaker,
-    }).then((buffer) => {
-      if (!buffer) {
-        // 没有填写配置的时候，会走到这里面来
-        audioStream.destroy(new Error('没有把配置填写完整'))
-      }
     })
+      // 以下错误处理的目的是如果判断到错误就让响应迅速中断，不然的话响应会一直挂起，导致配置界面 / 小爱音箱长时间处于无反应的状态
+      .then((buffer) => {
+        if (!buffer) {
+          // 没有填写配置的时候，会走到这里面来
+          audioStream.destroy(new Error('没有把配置填写完整'))
+        }
+      })
 
     let headersSent = false
 
@@ -185,7 +223,7 @@ export function runServer(options?: {
 
     audioStream.once('error', (error) => {
       if (!headersSent) {
-        res.status(500).send(error.message || 'Internal Server Error')
+        res.status(400).send(error.message || 'Internal Server Error')
       } else {
         res.end()
       }
