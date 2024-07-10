@@ -142,6 +142,7 @@ export function runServer(options?: {
     try {
       const fetchRes = await fetch(_trimEnd(testBaseUrl, '/') + '/ping', {
         method: 'POST',
+        signal: AbortSignal.timeout(500),
       })
       if (fetchRes.ok) {
         res.json({
