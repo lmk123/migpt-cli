@@ -1,4 +1,5 @@
 import { GuiConfig } from '@migptgui/options'
+import type { TTSConfig } from 'mi-gpt-tts'
 
 export async function getStatus() {
   const response = await fetch('/api/status')
@@ -22,6 +23,21 @@ export async function testPublicURL(
     return response.json()
   }
   throw new Error('Failed to test public URL：HTTP ' + response.statusText)
+}
+
+export async function testTts(ttsConfig: TTSConfig) {
+  const audioUrl =
+    '/api/test/audio?ttsConfig=' + encodeURIComponent(JSON.stringify(ttsConfig))
+  const audio = new Audio(audioUrl)
+  return new Promise<void>((resolve, reject) => {
+    audio.addEventListener('error', () => {
+      reject()
+    })
+    audio.addEventListener('canplay', () => {
+      resolve()
+      audio.play()
+    })
+  })
 }
 
 export async function run(config: unknown) {

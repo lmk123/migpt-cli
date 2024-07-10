@@ -18,6 +18,7 @@ import {
 import { useEffect, useState } from 'react'
 import * as apis from './apis.ts'
 import _debounce from 'lodash/debounce.js'
+import _pick from 'lodash/pick.js'
 
 const saveConfigDebounced = _debounce(apis.saveConfig, 1000)
 
@@ -163,6 +164,26 @@ export function App() {
                     } else {
                       alert('测试失败。')
                     }
+                  },
+                  (err) => {
+                    alert('测试失败。' + err)
+                  },
+                )
+              }}
+              onTtsTest={() => {
+                if (!config.tts || !config.gui?.ttsProvider) {
+                  alert('请先完成 TTS 引擎配置。')
+                  return
+                }
+
+                const testTtsConfig = _pick(config.tts, [
+                  config.gui.ttsProvider,
+                  'defaultSpeaker',
+                ])
+
+                apis.testTts(testTtsConfig).then(
+                  () => {
+                    // alert('测试成功。')
                   },
                   (err) => {
                     alert('测试失败。' + err)

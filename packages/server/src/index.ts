@@ -23,6 +23,8 @@ export function runServer(options?: {
 
   const defaultBotCwd = path.join(os.homedir(), '.migptgui/default/')
 
+  let guiConfigRunning: GuiConfig | undefined
+
   const isAuth = !!options?.users
   const ttsSecret = nanoid()
   const ttsSecretPath = '/' + ttsSecret
@@ -46,10 +48,14 @@ export function runServer(options?: {
   // 小爱音箱会通过这个接口获取语音合成的音频，所以不能给它加 basicAuth
   app.get(ttsPath, (req, res) => {
     // console.log('进入秘密路径的 /tts/tts.mp3')
-    if (!tts) {
-      res.status(500).send('TTS not initialized')
+
+    // 没有启动 MiGPT，或者没有配置过 tts
+    if (!guiConfigRunning || !guiConfigRunning.tts) {
+      res.status(500).send('Internal Server Error')
       return
     }
+
+    const tts = createTTS(guiConfigRunning.tts)
 
     const options: Record<string, unknown> = {}
     const nUrl = req.url.replace('+text=', '&text=') // 修正请求 URL
@@ -65,14 +71,54 @@ export function runServer(options?: {
 
     // console.log('master: 开始合成语音。配置：', options)
 
-    tts(options)
+    tts({
+      ...options,
+      // 指定 speaker 的原因见 `/api/test/audio` 接口的注释
+      speaker: guiConfigRunning.tts.defaultSpeaker,
+    })
+      // 错误处理的代码是复制的 `/api/test/audio` 接口里的
+      .then((buffer) => {
+        if (!buffer) {
+          // 没有填写配置的时候，会走到这里面来
+          audioStream.destroy(new Error('没有把配置填写完整'))
+        }
+      })
 
-    res.writeHead(200, {
-      'Transfer-Encoding': 'chunked',
-      'Content-Type': 'audio/mp3',
+    let headersSent = false
+
+    audioStream.on('data', (chunk) => {
+      if (
+        (chunk.length === 3 && chunk.toString('utf8') === '404') ||
+        (chunk.length === 5 && chunk.toString('utf8') === 'error')
+      ) {
+        audioStream.destroy(new Error('配置填写有误'))
+        return
+      }
+
+      // 到了这里才可以确保这次是正常响应了
+      if (!headersSent) {
+        res.writeHead(200, {
+          'Transfer-Encoding': 'chunked',
+          'Content-Type': 'audio/mp3',
+        })
+        headersSent = true
+      }
+
+      // 流式响应数据
+      res.write(chunk)
     })
 
-    audioStream.pipe(res)
+    audioStream.on('end', () => {
+      res.end()
+    })
+
+    audioStream.once('error', (error) => {
+      if (!headersSent) {
+        res.status(400).send(error.message || 'Internal Server Error')
+      } else {
+        res.end()
+      }
+    })
   })
 
   app.use(express.json())
@@ -84,8 +130,6 @@ export function runServer(options?: {
   if (options?.staticPath) {
     app.use(express.static(options.staticPath))
   }
-
-  let tts: ReturnType<typeof createTTS>
 
   app.get('/api/status', async (req, res) => {
     res.json(getStatus())
@@ -113,6 +157,85 @@ export function runServer(options?: {
         success: false,
       })
     }
+  })
+
+  app.get('/api/test/audio', (req, res) => {
+    // console.log('测试 audio 播放的参数：', req.query)
+
+    const params = req.query as { ttsConfig: string }
+    const options = JSON.parse(params.ttsConfig)
+    const testTTS = createTTS(options)
+
+    const audioStream = new Readable({ read() {} })
+    options.stream = audioStream
+
+    // console.log('master: 开始合成语音。配置：', options)
+
+    testTTS({
+      text: '配置成功！',
+      stream: audioStream,
+      // 关于 defaultSpeaker：
+      // mi-gpt-tts 支持三种 tts 服务，但是，这三种服务是耦合在一起的。
+      // 举个例子：我同时配置了 edge 和 volcano，如果我不指定 defaultSpeaker，那么 mi-gpt-tts 会默认使用 volcano；
+      // 如果我想要使用 edge，那么我需要在配置中指定 defaultSpeaker 为 edge 所支持的 speaker 比如“云希”。
+      //
+      // 同时，mi-gpt-tts 会将第一次调用的 defaultSpeaker 作为之后所有朗读的 speaker，举个例子，如果我第一次朗读时 defaultSpeaker 为“云希”，
+      // 那么之后所有的朗读都会使用 edge，如果我在这之后把 defaultSpeaker 切换为了 volcano 的“灿灿”，它仍然是用 edge 的“云希”朗读的。
+      // 为了解决这个问题，需要每次调用都指定下面的 speaker，这个可以强制要求 mi-gpt-tts 使用指定的 speaker。
+      speaker: options.defaultSpeaker,
+    })
+      // 以下错误处理的目的是如果判断到错误就让响应迅速中断，不然的话响应会一直挂起，导致配置界面 / 小爱音箱长时间处于无反应的状态
+      .then((buffer) => {
+        if (!buffer) {
+          // 没有填写配置的时候，会走到这里面来
+          audioStream.destroy(new Error('没有把配置填写完整'))
+        }
+      })
+
+    let headersSent = false
+
+    audioStream.on('data', (chunk) => {
+      // console.log('data 事件数据长度：', chunk.length)
+
+      // 如果填写了配置但是填写的不对，则第一次会推送过来一个 404
+      // __但奇怪的是我没有在 mi-gpt-tts 里找到这个 404 的推送，先不管了__
+      // 破案了。
+      // npm 上发布的是 v2.0.0 的 mi-gpt-tts，当时它推送的确实是 "404"，见
+      // https://github.com/idootop/mi-gpt-tts/blob/v2.0.0/src/common/stream.ts#L30
+      // github 上现在是 v3.0.0 的，它给改成 "error" 了，见
+      // https://github.com/idootop/mi-gpt-tts/blob/v3.0.0/src/common/stream.ts#L30
+      if (
+        (chunk.length === 3 && chunk.toString('utf8') === '404') ||
+        (chunk.length === 5 && chunk.toString('utf8') === 'error')
+      ) {
+        audioStream.destroy(new Error('配置填写有误'))
+        return
+      }
+
+      // 到了这里才可以确保这次是正常响应了
+      if (!headersSent) {
+        res.writeHead(200, {
+          'Transfer-Encoding': 'chunked',
+          'Content-Type': 'audio/mp3',
+        })
+        headersSent = true
+      }
+
+      // 流式响应数据
+      res.write(chunk)
+    })
+
+    audioStream.on('end', () => {
+      res.end()
+    })
+
+    audioStream.once('error', (error) => {
+      if (!headersSent) {
+        res.status(400).send(error.message || 'Internal Server Error')
+      } else {
+        res.end()
+      }
+    })
   })
 
   // 在自己运行 tts 服务时需要有一个局域网或公网 IP 地址给小爱音箱来访问下面的 /tts/tts.mp3 接口
@@ -178,7 +301,6 @@ export function runServer(options?: {
       migptConfig.gui.ttsProvider !== 'custom' &&
       migptConfig.tts
     ) {
-      tts = createTTS(migptConfig.tts)
       migptConfig.env.TTS_BASE_URL = `${_trimEnd(migptConfig.gui.publicURL, '/')}${ttsSecretPath}/tts`
       // console.log(
       //   '内建 TTS 服务地址：',
@@ -187,6 +309,8 @@ export function runServer(options?: {
     }
 
     // console.log('master: 收到 /api/start', migptConfig)
+
+    guiConfigRunning = migptConfig
 
     await run(migptConfig as RunConfig, defaultBotCwd)
 
