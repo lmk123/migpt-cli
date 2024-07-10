@@ -1,6 +1,6 @@
 {
   "name": "@migptgui/options",
-  "version": "1.6.0",
+  "version": "1.10.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.17.5",
-    "mi-gpt": "^4.0.0",
+    "mi-gpt": "^4.1.0",
     "mi-gpt-tts": "^2.0.0"
   }
 }
