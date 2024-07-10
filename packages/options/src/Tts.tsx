@@ -14,6 +14,15 @@ import { type TTSConfig } from 'mi-gpt-tts'
 import { TTSVolcano } from './components/TTSVolcano.js'
 import { isLocalhost } from './utils.js'
 
+// mi-gpt-tts 不支持指定用哪个服务来朗读，必须通过音色来指定，所以需要带上默认音色
+// 举个例子，如果同时配置了 edge 和 volcano，且没有提供默认音色，那么会使用 volcano 来朗读
+// 如果我就是想要用 edge 来朗读，那么就需要提供 edge 的默认音色
+const defaultSpeakerMap: Record<string, string | undefined> = {
+  edge: '云希',
+  volcano: '灿灿',
+  openai: 'Alloy',
+}
+
 interface TtsConfig {
   config: {
     speaker: {
@@ -39,6 +48,7 @@ export function Tts(props: {
   config: TtsConfig
   onChange: (config: TtsConfig) => void
   onPublicURLTest?: (url: string) => void
+  onTtsTest?: () => void
 }) {
   const { config, onChange } = props
 
@@ -59,6 +69,13 @@ export function Tts(props: {
                   draft.gui = {}
                 }
                 draft.gui.ttsProvider = value === 'xiaoai' ? undefined : value
+                const defaultSpeaker = defaultSpeakerMap[value]
+                if (defaultSpeaker) {
+                  if (!draft.tts) {
+                    draft.tts = {}
+                  }
+                  draft.tts.defaultSpeaker = defaultSpeaker
+                }
               })
               onChange(newState)
             }}
@@ -247,22 +264,37 @@ export function Tts(props: {
         {/* 只要不是小爱和自定义，就能配置音色 */}
         {config.config.speaker.tts === 'custom' &&
           config.gui?.ttsProvider !== 'custom' && (
-            <FormGroup label={'音色'} inline>
-              <InputGroup
-                placeholder={'默认'}
-                value={config.tts?.defaultSpeaker || ''}
-                onValueChange={(val) => {
-                  onChange(
-                    produce(config, (draft) => {
-                      if (!draft.tts) {
-                        draft.tts = {}
-                      }
-                      draft.tts.defaultSpeaker = val === '' ? undefined : val
-                    }),
-                  )
-                }}
-              />
-            </FormGroup>
+            <>
+              <FormGroup label={'音色'} inline>
+                <InputGroup
+                  required
+                  value={config.tts?.defaultSpeaker || ''}
+                  onValueChange={(val) => {
+                    onChange(
+                      produce(config, (draft) => {
+                        if (!draft.tts) {
+                          draft.tts = {}
+                        }
+                        draft.tts.defaultSpeaker = val === '' ? undefined : val
+                      }),
+                    )
+                  }}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Button
+                  onClick={() => {
+                    if (props.onTtsTest) {
+                      props.onTtsTest()
+                    } else {
+                      alert('在使用 migpt-server 时才支持测试语音配置')
+                    }
+                  }}
+                >
+                  测试语音配置
+                </Button>
+              </FormGroup>
+            </>
           )}
 
         {/* 自定义配置项 */}

@@ -115,6 +115,40 @@ export function runServer(options?: {
     }
   })
 
+  app.get('/api/test/audio', (req, res) => {
+    // console.log('测试 audio 播放的参数：', req.query)
+
+    const params = req.query as { ttsConfig: string }
+    const options = JSON.parse(params.ttsConfig)
+    const testTTS = createTTS(options)
+
+    const audioStream = new Readable({ read() {} })
+    options.stream = audioStream
+
+    // console.log('master: 开始合成语音。配置：', options)
+
+    testTTS({
+      text: '配置成功！',
+      stream: audioStream,
+      // 关于 defaultSpeaker：
+      // mi-gpt-tts 支持三种 tts 服务，但是，这三种服务是耦合在一起的。
+      // 举个例子：我同时配置了 edge 和 volcano，如果我不指定 defaultSpeaker，那么 mi-gpt-tts 会默认使用 volcano；
+      // 如果我想要使用 edge，那么我需要在配置中指定 defaultSpeaker 为 edge 所支持的 speaker 比如“云希”。
+      //
+      // 同时，mi-gpt-tts 会将第一次调用的 defaultSpeaker 作为之后所有朗读的 speaker，举个例子，如果我第一次朗读时 defaultSpeaker 为“云希”，
+      // 那么之后所有的朗读都会使用 edge，如果我在这之后把 defaultSpeaker 切换为了 volcano 的“灿灿”，它仍然是用 edge 的“云希”朗读的。
+      // 为了解决这个问题，需要每次调用都指定下面的 speaker，这个可以强制要求 mi-gpt-tts 使用指定的 speaker。
+      speaker: options.defaultSpeaker,
+    })
+
+    res.writeHead(200, {
+      'Transfer-Encoding': 'chunked',
+      'Content-Type': 'audio/mp3',
+    })
+
+    audioStream.pipe(res)
+  })
+
   // 在自己运行 tts 服务时需要有一个局域网或公网 IP 地址给小爱音箱来访问下面的 /tts/tts.mp3 接口
   // app.get('/api/myip', (req, res) => {
   //   res.json({ ip: ip.address('public') })
