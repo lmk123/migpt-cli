@@ -11,6 +11,7 @@ import { mergeWithUndefined } from './_utils.js'
 export function Options(props: {
   config: GuiConfig
   onChange: (config: GuiConfig) => void
+  onPublicURLTest?: (url: string) => void
 }) {
   const { config, onChange } = props
 
@@ -62,6 +63,7 @@ export function Options(props: {
             })
             onChange(newState)
           }}
+          onPublicURLTest={props.onPublicURLTest}
         />
       </div>
       <div>

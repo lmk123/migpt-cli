@@ -15,7 +15,6 @@
   ],
   "dependencies": {
     "@migptgui/controller": "^1.6.0",
-    "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-basic-auth": "^1.2.1",
     "fs-extra": "^11.2.0",
