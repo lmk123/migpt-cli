@@ -5,7 +5,7 @@ import os from 'node:os'
 import { getStatus, type RunConfig, run, stop } from '@migptgui/controller'
 import fse from 'fs-extra'
 import fs from 'node:fs/promises'
-import { createTTS } from 'mi-gpt-tts'
+import { createTTS, kTTSSpeakers } from 'mi-gpt-tts'
 import { Readable } from 'node:stream'
 // import ip from 'ip'
 import { type GuiConfig } from '@migptgui/options'
@@ -29,6 +29,7 @@ export function runServer(options?: {
   const ttsSecret = nanoid()
   const ttsSecretPath = '/' + ttsSecret
   const ttsPath = ttsSecretPath + '/tts/tts.mp3'
+  const ttsSpeakersPath = ttsSecretPath + '/tts/speakers'
 
   async function saveConfig(config: GuiConfig) {
     await fse.ensureDir(defaultBotCwd)
@@ -43,6 +44,12 @@ export function runServer(options?: {
   // 用于测试用户填写的对外地址是否正确
   app.post('/ping', (req, res) => {
     res.status(204).send()
+  })
+
+  // mi-gpt 会通过这个接口获取可用的音色列表，用于通过【切换音色关键词】来切换音色
+  app.get(ttsSpeakersPath, (req, res) => {
+    // console.log('进入秘密路径的 /tts/speakers')
+    res.json(kTTSSpeakers)
   })
 
   // 小爱音箱会通过这个接口获取语音合成的音频，所以不能给它加 basicAuth
