@@ -1,6 +1,6 @@
 {
   "name": "@migptgui/server",
-  "version": "1.11.0",
+  "version": "1.12.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
