@@ -12,6 +12,16 @@ import { type GuiConfig } from '@migptgui/options'
 import baseAuth from 'express-basic-auth'
 import { nanoid } from 'nanoid'
 import _trimEnd from 'lodash/trimEnd.js'
+import createDebug from 'debug'
+
+const dDefault = createDebug('@migptgui/server:default')
+// dDefault.enabled = true
+
+const dRoute = createDebug('@migptgui/server:route')
+// dRoute.enabled = true
+
+const dAudio = createDebug('@migptgui/server:audio')
+// dAudio.enabled = true
 
 export function runServer(options?: {
   open?: boolean
@@ -43,46 +53,48 @@ export function runServer(options?: {
 
   // 用于测试用户填写的对外地址是否正确
   app.post('/ping', (req, res) => {
+    dRoute('进入 POST /ping')
     res.status(204).send()
   })
 
   // mi-gpt 会通过这个接口获取可用的音色列表，用于通过【切换音色关键词】来切换音色
   app.get(ttsSpeakersPath, (req, res) => {
-    // console.log('进入秘密路径的 /tts/speakers')
+    dRoute('进入 GET /tts/speakers，`req.query`：%O', req.query)
     res.json(kTTSSpeakers)
   })
 
   // 小爱音箱会通过这个接口获取语音合成的音频，所以不能给它加 basicAuth
   app.get(ttsPath, (req, res) => {
-    // console.log('进入秘密路径的 /tts/tts.mp3')
+    dRoute('进入 GET /tts/tts.mp3，`req.url`：%s', req.url)
+    // req.url 会是这么个格式：`/tts/tts.mp3?speaker=zh-CN-liaoning-XiaobeiNeural+text=要朗读的文本`
+    // 其中要注意的是：
+    // - speaker 与 text 参数中间用的是加号 + 来连接，而不是 &，所以需要先修正一下
+    // - speaker 参数一般是空的，但是，如果用户通过【切换音色关键词】换过音色，那么这个参数就会有值，例如 zh-CN-liaoning-XiaobeiNeural
 
     // 没有启动 MiGPT，或者没有配置过 tts
     if (!guiConfigRunning || !guiConfigRunning.tts) {
+      dDefault('没有启动 MiGPT，或者没有配置过 tts，所以返回 500')
       res.status(500).send('Internal Server Error')
       return
     }
 
     const tts = createTTS(guiConfigRunning.tts)
 
-    const options: Record<string, unknown> = {}
     const nUrl = req.url.replace('+text=', '&text=') // 修正请求 URL
     const url = new URL('http://localhost' + nUrl)
-    for (const [key, value] of url.searchParams.entries()) {
-      options[key] = value
+    const audioStream = new Readable({ read() {} })
+
+    const options = {
+      // 指定 speaker 的原因见 `/api/test/audio` 接口的注释
+      speaker:
+        url.searchParams.get('speaker') || guiConfigRunning.tts.defaultSpeaker!,
+      text: decodeURIComponent(url.searchParams.get('text') || ''),
+      stream: audioStream,
     }
 
-    // console.log('准备合成语音。参数：', options)
+    dAudio('准备合成语音。参数：%O', options)
 
-    const audioStream = new Readable({ read() {} })
-    options.stream = audioStream
-
-    // console.log('master: 开始合成语音。配置：', options)
-
-    tts({
-      ...options,
-      // 指定 speaker 的原因见 `/api/test/audio` 接口的注释
-      speaker: guiConfigRunning.tts.defaultSpeaker,
-    })
+    tts(options)
       // 错误处理的代码是复制的 `/api/test/audio` 接口里的
       .then((buffer) => {
         if (!buffer) {
@@ -139,15 +151,22 @@ export function runServer(options?: {
   }
 
   app.get('/api/status', async (req, res) => {
-    res.json(getStatus())
+    const s = getStatus()
+    dRoute('进入 GET /api/status，响应：%O', s)
+    res.json(s)
   })
 
   // 测试对外地址是否能连通
   app.post('/api/test', async (req, res) => {
     const testBaseUrl = req.body.url
-    // console.log('测试地址：', _trimEnd(testBaseUrl, '/') + '/ping')
+    const ping = _trimEnd(testBaseUrl, '/') + '/ping'
+    dRoute(
+      '进入 POST /api/test，url 参数为：%s；拼接后的 ping 接口地址为：%s',
+      testBaseUrl,
+      ping,
+    )
     try {
-      const fetchRes = await fetch(_trimEnd(testBaseUrl, '/') + '/ping', {
+      const fetchRes = await fetch(ping, {
         method: 'POST',
         signal: AbortSignal.timeout(500),
       })
@@ -168,7 +187,7 @@ export function runServer(options?: {
   })
 
   app.get('/api/test/audio', (req, res) => {
-    // console.log('测试 audio 播放的参数：', req.query)
+    dRoute('进入 GET /api/test/audio，query 参数：%O', req.query)
 
     const params = req.query as { ttsConfig: string }
     const options = JSON.parse(params.ttsConfig)
@@ -177,9 +196,7 @@ export function runServer(options?: {
     const audioStream = new Readable({ read() {} })
     options.stream = audioStream
 
-    // console.log('master: 开始合成语音。配置：', options)
-
-    testTTS({
+    const ro = {
       text: '配置成功！',
       stream: audioStream,
       // 关于 defaultSpeaker：
@@ -191,7 +208,11 @@ export function runServer(options?: {
       // 那么之后所有的朗读都会使用 edge，如果我在这之后把 defaultSpeaker 切换为了 volcano 的“灿灿”，它仍然是用 edge 的“云希”朗读的。
       // 为了解决这个问题，需要每次调用都指定下面的 speaker，这个可以强制要求 mi-gpt-tts 使用指定的 speaker。
       speaker: options.defaultSpeaker,
-    })
+    }
+
+    dAudio('在语音测试接口中，开始合成语音。配置：%O', ro)
+
+    testTTS(ro)
       // 以下错误处理的目的是如果判断到错误就让响应迅速中断，不然的话响应会一直挂起，导致配置界面 / 小爱音箱长时间处于无反应的状态
       .then((buffer) => {
         if (!buffer) {
@@ -253,6 +274,7 @@ export function runServer(options?: {
 
   // 读取配置
   app.get('/api/default', async (req, res) => {
+    dRoute('进入 GET /api/default')
     let migptConfig: GuiConfig | undefined
 
     try {
@@ -276,13 +298,14 @@ export function runServer(options?: {
   // 保存配置
   app.put('/api/default', async (req, res) => {
     const migptConfig = req.body as GuiConfig
+    dRoute('进入 PUT /api/default，body 参数：%O', migptConfig)
     await saveConfig(migptConfig)
     res.json({ success: true })
   })
 
   // 删除 .mi.json 和 .bot.json
   app.delete('/api/default', (req, res) => {
-    // console.log('准备删除路径：', path.join(os.homedir(), '.migptgui/default/'))
+    dRoute('进入 DELETE /api/default，准备删除的路径：%s', defaultBotCwd)
     Promise.all([
       fse.remove(path.join(defaultBotCwd, '.mi.json')),
       fse.remove(path.join(defaultBotCwd, '.bot.json')),
@@ -298,6 +321,7 @@ export function runServer(options?: {
 
   // 启动 MiGPT
   app.post('/api/default/start', async (req, res) => {
+    dRoute('进入 POST /api/default/start，body 参数：%O', req.body)
     const migptConfig = req.body as GuiConfig
 
     await saveConfig(migptConfig)
@@ -310,10 +334,10 @@ export function runServer(options?: {
       migptConfig.tts
     ) {
       migptConfig.env.TTS_BASE_URL = `${_trimEnd(migptConfig.gui.publicURL, '/')}${ttsSecretPath}/tts`
-      // console.log(
-      //   '内建 TTS 服务地址：',
-      //   migptConfig.env.TTS_BASE_URL + '/tts.mp3',
-      // )
+      dAudio(
+        '检测到用户启用了内建 TTS 配置，所以修改了 TTS_BASE_URL 为：%s',
+        migptConfig.env.TTS_BASE_URL,
+      )
     }
 
     // console.log('master: 收到 /api/start', migptConfig)
@@ -326,7 +350,7 @@ export function runServer(options?: {
   })
 
   app.post('/api/default/stop', async (req, res) => {
-    // console.log('master: 收到 /api/stop')
+    dRoute('进入 POST /api/default/stop')
 
     await stop()
 
