@@ -16,13 +16,12 @@
     "dist"
   ],
   "dependencies": {
-    "@migptgui/server": "^1.11.0",
     "@migptgui/gui": "^1.11.0",
+    "@migptgui/server": "^1.11.0",
     "commander": "^12.1.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.4",
-    "@types/node": "^20.14.7",
-    "typescript": "^5.5.2"
+    "@types/node": "^22.7.3",
+    "typescript": "^5.6.2"
   }
 }
