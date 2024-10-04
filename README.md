@@ -1,3 +1,7 @@
+给自己的另一个项目打个广告：划词翻译，一站式划词 / 截图 / 网页全文 / 音视频 AI 翻译扩展，[点击查看简介](https://hcfy.ai/docs/guides/summary)
+
+-------------------
+
 # MiGPT GUI
 
 为 [MiGPT](https://github.com/idootop/mi-gpt/) 提供图形化操作界面。
