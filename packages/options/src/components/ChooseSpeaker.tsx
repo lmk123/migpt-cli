@@ -12,6 +12,15 @@ interface SpeakerInfo {
 
 const speakersPerfect: SpeakerInfo[] = [
   {
+    name: 'Xiaomi 智能音箱 Pro',
+    options: {
+      ttsCommand: [7, 3],
+      wakeUpCommand: [7, 1],
+      playingCommand: undefined,
+      streamResponse: undefined,
+    },
+  },
+  {
     name: '小爱音箱 Pro',
     options: {
       ttsCommand: [5, 1],
